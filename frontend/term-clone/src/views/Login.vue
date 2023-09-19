@@ -1,13 +1,16 @@
 <template>
-  <div class="login">
+  <div class="login bg-black">
     
   </div>
 </template>
 
-<script lang="ts">
+<script lang="ts" setup>
 
 </script>
 
-<style>
-
+<style scoped>
+  .login {
+    width: 100vw;
+    height: 100vh;
+  }
 </style>
