@@ -1,6 +1,6 @@
 <template>
-  <div class="login bg-black">
-    
+  <div class="login">
+    Hello World
   </div>
 </template>
 
@@ -10,7 +10,6 @@
 
 <style scoped>
   .login {
-    width: 100vw;
-    height: 100vh;
+
   }
 </style>

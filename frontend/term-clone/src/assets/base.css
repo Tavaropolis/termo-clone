@@ -1,5 +1,6 @@
 /* color palette from <https://github.com/vuejs/theme> */
 :root {
+  --main-color: #6E5C62;
   --vt-c-white: #ffffff;
   --vt-c-white-soft: #f8f8f8;
   --vt-c-white-mute: #f2f2f2;
@@ -31,7 +32,7 @@
   --color-border-hover: var(--vt-c-divider-light-1);
 
   --color-heading: var(--vt-c-text-light-1);
-  --color-text: var(--vt-c-text-light-1);
+  --color-text: var(--vt-c-white);
 
   --section-gap: 160px;
 }
@@ -61,12 +62,13 @@
 body {
   min-height: 100vh;
   color: var(--color-text);
-  background: var(--color-background);
+  background: var(--main-color);
   transition:
     color 0.5s,
     background-color 0.5s;
   line-height: 1.6;
   font-family:
+    "Mitr",
     Inter,
     -apple-system,
     BlinkMacSystemFont,
