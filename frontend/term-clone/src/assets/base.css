@@ -1,6 +1,10 @@
 /* color palette from <https://github.com/vuejs/theme> */
 :root {
   --main-color: #6E5C62;
+  --secondary-color: #312B2D;
+  --focus-color: #453B3E;
+
+
   --vt-c-white: #ffffff;
   --vt-c-white-soft: #f8f8f8;
   --vt-c-white-mute: #f2f2f2;
@@ -85,4 +89,8 @@ body {
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+::placeholder {
+  color: var(--vt-c-white);
 }

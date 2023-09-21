@@ -1,15 +1,82 @@
 <template>
-  <div class="login">
-    Hello World
+  <div class="login-container flex flex-col items-center justify-center">
+    <div class="login-box rounded flex flex-col items-center justify-evenly">
+      <h1>Login</h1>
+      <form action="" method="post">
+        <div class="input-container flex flex-col items-center">
+          <input @focus="backGroundChange" @focusout="backGroundChange" type="text" required id="login" placeholder="Login" class="rounded">
+          <input @focus="backGroundChange" @focusout="backGroundChange" type="password" required name="" id="" ref="password" placeholder="Senha" class="rounded">
+        </div>
+        <button type="submit" class="rounded">Logar</button>
+      </form>
+    </div>
   </div>
 </template>
 
-<script lang="ts" setup>
+<script lang="ts">
+
+export default {
+  setup() {
+    const backGroundChange = () => {
+      const body = document.querySelector('.login-container');
+
+      body?.classList.toggle("dark-background");
+    }
+
+    return {
+      backGroundChange
+    };
+  }
+}
 
 </script>
 
 <style scoped>
-  .login {
+.login-box {
+  background-color: var(--secondary-color);
+  width: 50vw;
+  height: 80vh;
+  overflow: auto;
+}
 
-  }
+h1 {
+  font-size: 35px;
+  padding: 2px;
+}
+
+form {
+  display: contents;
+}
+
+input {
+  background-color: #CB8776;
+  width: 25vw;
+  height: 32px;
+  margin: 3px;
+  transition: all 1.5s ease-in-out;
+}
+
+input:focus {
+  width: 30vw
+}
+
+::placeholder {
+  color: var(--vt-c-white);
+}
+
+button {
+  background-color: #EDA571;
+  width: 12vw;
+  height: 35px;
+}
+
+div.login-container {
+  width: 100vw;
+  height: 100vh;
+  transition: all 1s ease-in-out;
+}
+
+.dark-background {
+  background-color: var(--focus-color);
+}
 </style>
