@@ -51,7 +51,7 @@ form {
 input {
   background-color: #CB8776;
   width: 25vw;
-  height: 32px;
+  height: 35px;
   margin: 3px;
   transition: all 1.5s ease-in-out;
 }
@@ -68,6 +68,11 @@ button {
   background-color: #EDA571;
   width: 12vw;
   height: 35px;
+  transition: all 1s ease-in-out;
+}
+
+button:hover {
+  transform: scale(1.1);
 }
 
 div.login-container {
