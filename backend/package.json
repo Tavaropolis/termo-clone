@@ -1,4 +1,14 @@
 {
+
+  "name": "termo-clone-backend",
+  "version": "1.0.0",
+  "description": "Backend for a clone of term.ooo",
+  "main": "server.js",
+  "keywords": [
+    "express.js"
+  ],
+  "author": "Gabriel A. Tavares",
+  "license": "ISC",
   "scripts": {
     "start": "node server.js",
     "build": "tsc",
