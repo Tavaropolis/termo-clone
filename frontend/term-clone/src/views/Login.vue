@@ -4,31 +4,63 @@
       <h1>Login</h1>
       <form action="" method="post">
         <div class="input-container flex flex-col items-center">
-          <input @focus="backGroundChange" @focusout="backGroundChange" type="text" required id="login" placeholder="Login" class="rounded">
-          <input @focus="backGroundChange" @focusout="backGroundChange" type="password" required name="" id="" ref="password" placeholder="Senha" class="rounded">
+          <input
+            v-model="userLogin"
+            @focus="backGroundChange"
+            @focusout="backGroundChange"
+            type="text"
+            required
+            autocomplete="on"
+            id="login"
+            placeholder="Login"
+            class="rounded"
+          />
+          <input
+            v-model="userPassword"
+            @focus="backGroundChange"
+            @focusout="backGroundChange"
+            type="password"
+            required
+            name=""
+            id=""
+            autocomplete="on"
+            placeholder="Senha"
+            class="rounded"
+          />
         </div>
-        <button type="submit" class="rounded">Logar</button>
+        <button @click="formReq" type="submit" class="rounded">Logar</button>
       </form>
     </div>
   </div>
 </template>
 
-<script lang="ts">
+<script lang="ts" setup>
+import { ref } from 'vue';
+import axios from "axios";
 
-export default {
-  setup() {
-    const backGroundChange = () => {
-      const body = document.querySelector('.login-container');
+const userLogin = ref<string>();
+const userPassword = ref<string>();
 
-      body?.classList.toggle("dark-background");
-    }
+const backGroundChange = () => {
+  const body = document.querySelector('.login-container')
 
-    return {
-      backGroundChange
-    };
-  }
+  body?.classList.toggle('dark-background')
 }
 
+ const formReq = (e:Event) => {
+  e.preventDefault()
+  console.log(userLogin.value, userPassword.value);
+  let response = axios.post('http://127.0.0.1:5001/user', {
+    user: userLogin.value,
+    password: userPassword.value
+  }, {
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded'
+    }
+  } 
+  )
+  console.log(response);
+ }
 </script>
 
 <style scoped>
@@ -49,7 +81,7 @@ form {
 }
 
 input {
-  background-color: #CB8776;
+  background-color: #cb8776;
   width: 25vw;
   height: 35px;
   margin: 3px;
@@ -57,7 +89,7 @@ input {
 }
 
 input:focus {
-  width: 30vw
+  width: 30vw;
 }
 
 ::placeholder {
@@ -65,7 +97,7 @@ input:focus {
 }
 
 button {
-  background-color: #EDA571;
+  background-color: #eda571;
   width: 12vw;
   height: 35px;
   transition: all 1s ease-in-out;
