@@ -1,4 +1,5 @@
 //Importando bibliotecas
+import express from "express";
 import { Router } from "express";
 import bodyParser from "body-parser";
 
@@ -8,7 +9,8 @@ import User from "../models/userModel.js";
 const router = Router();
 
 // create application/json parser
-var jsonParser = bodyParser.json()
+const app = express();
+app.use(bodyParser.json());
  
 // create application/x-www-form-urlencoded parser
 var urlencodedParser = bodyParser.urlencoded({ extended: false });

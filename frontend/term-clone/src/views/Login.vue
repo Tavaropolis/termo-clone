@@ -47,19 +47,25 @@ const backGroundChange = () => {
   body?.classList.toggle('dark-background')
 }
 
- const formReq = (e:Event) => {
+ const formReq = async (e:Event) => {
   e.preventDefault()
   console.log(userLogin.value, userPassword.value);
-  let response = axios.post('http://127.0.0.1:5001/user', {
-    user: userLogin.value,
-    password: userPassword.value
-  }, {
-    headers: {
-      'Content-Type': 'application/x-www-form-urlencoded'
-    }
-  } 
-  )
-  console.log(response);
+  try {
+    let response = await axios.post('http://127.0.0.1:5001/user', {
+      user: userLogin.value,
+      password: userPassword.value
+    }, {
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      }
+    });
+
+    let { data } = response;
+    console.log(data)
+
+  } catch(e) {
+    console.log(e);
+  }
  }
 </script>
 
