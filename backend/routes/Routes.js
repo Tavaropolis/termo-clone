@@ -7,7 +7,7 @@ import bodyParser from "body-parser";
 import User from "../models/userModel.js";
 
 //Importando Controllers
-import { authUser } from "../controllers/Auth.js";
+import { authUser, authToken } from "../controllers/Auth.js";
 
 const router = Router();
 
@@ -28,5 +28,6 @@ router.get('/', async (req, res) => {
 })
 
 router.post('/user', urlencodedParser, authUser);
+router.post('/authtoken', urlencodedParser, authToken);
 
 export default router;

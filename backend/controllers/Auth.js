@@ -1,4 +1,5 @@
 import jwt from "jsonwebtoken";
+import 'dotenv/config';
 
 //Importando Models
 import User from "../models/userModel.js";
@@ -23,6 +24,19 @@ export async function authUser(req, res, next) {
         }
 
         res.status(200).json(userResponse);
+    } catch(e) {
+        console.log(e);
+    }
+}
+
+export async function authToken(req, res, next) {
+    try {
+        let token = req.body.token;
+        const decoded = jwt.verify(token, process.env.TOKEN_KEY);
+        console.log(decoded);
+        if(decoded) {
+            res.status(200).send("Bem vindo 😃");
+        }
     } catch(e) {
         console.log(e);
     }
