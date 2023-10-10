@@ -1,11 +1,10 @@
 <script setup lang="ts">
-// import { RouterLink, RouterView } from 'vue-router'
-import Login from './views/Login.vue';
+import { RouterLink, RouterView } from 'vue-router'
 </script>
 
 <template class="">
   <div class="container">
-    <Login/>
+    <RouterView/>
   </div>
 </template>
 
