@@ -37,6 +37,9 @@
 <script lang="ts" setup>
 import { ref } from 'vue'
 import axios from 'axios'
+import { useRouter } from 'vue-router';
+
+const router = useRouter();
 
 const userLogin = ref<string>()
 const userPassword = ref<string>()
@@ -48,8 +51,8 @@ const backGroundChange = () => {
 }
 
 const formReq = async (e: Event) => {
-  e.preventDefault()
-  console.log(userLogin.value, userPassword.value)
+  e.preventDefault();
+
   try {
     let response = await axios.post(
       'http://127.0.0.1:5001/user',
@@ -74,7 +77,6 @@ const formReq = async (e: Event) => {
 
 const tokkenValidate = async(user: any) => {
   try {
-    console.log(user);
     let response = await axios.post(
       'http://127.0.0.1:5001/authtoken',
       { ...user }, 
@@ -84,6 +86,11 @@ const tokkenValidate = async(user: any) => {
         }
       });
 
+      if(response) {
+        localStorage.setItem("accessToken", user.token)
+        router.push({ path: "/" });
+      }
+      
       console.log(response);
   } catch(e) {
     console.log(e)
