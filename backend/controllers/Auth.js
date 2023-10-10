@@ -1,11 +1,14 @@
 import jwt from "jsonwebtoken";
 import 'dotenv/config';
+import sanitize from "mongo-sanitize";
 
 //Importando Models
 import User from "../models/userModel.js";
+import { sanitizeFilter } from "mongoose";
 
 export async function authUser(req, res, next) {
     try {
+        req.body = sanitize(req.body);
         const queryResponse = await User.findOne({username: req.body.user});
 
         if(!queryResponse) {
@@ -31,6 +34,7 @@ export async function authUser(req, res, next) {
 
 export async function authToken(req, res, next) {
     try {
+        req.body = sanitize(req.body);
         let token = req.body.token;
         const decoded = jwt.verify(token, process.env.TOKEN_KEY);
         console.log(decoded);
