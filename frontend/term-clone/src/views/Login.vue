@@ -39,11 +39,14 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue';
-import axios from "axios";
+import { ref } from 'vue'
+import axios from 'axios'
+import { useRouter } from 'vue-router';
 
-const userLogin = ref<string>();
-const userPassword = ref<string>();
+const router = useRouter();
+
+const userLogin = ref<string>()
+const userPassword = ref<string>()
 
 const backGroundChange = () => {
   const body = document.querySelector('.login-container')
@@ -51,26 +54,52 @@ const backGroundChange = () => {
   body?.classList.toggle('dark-background')
 }
 
- const formReq = async (e:Event) => {
-  e.preventDefault()
-  console.log(userLogin.value, userPassword.value);
+const formReq = async (e: Event) => {
+  e.preventDefault();
+
   try {
-    let response = await axios.post('http://127.0.0.1:5001/user', {
-      user: userLogin.value,
-      password: userPassword.value
-    }, {
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded'
+    let response = await axios.post(
+      'http://127.0.0.1:5001/user',
+      {
+        user: userLogin.value,
+        password: userPassword.value
+      },
+      {
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded'
+        }
       }
-    });
+    )
 
     let { data } = response;
-    console.log(data)
 
-  } catch(e) {
-    console.log(e);
+    tokkenValidate(data);
+  } catch (e) {
+    console.log(e)
   }
- }
+}
+
+const tokkenValidate = async(user: any) => {
+  try {
+    let response = await axios.post(
+      'http://127.0.0.1:5001/authtoken',
+      { ...user }, 
+      {
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        }
+      });
+
+      if(response) {
+        localStorage.setItem("accessToken", user.token)
+        router.push({ path: "/" });
+      }
+      
+      console.log(response);
+  } catch(e) {
+    console.log(e)
+  }
+}
 </script>
 
 <style scoped>

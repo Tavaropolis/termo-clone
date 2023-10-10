@@ -1,13 +1,23 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
 const router = createRouter({
-  history: createWebHistory(import.meta.env.BASE_URL),
+  history: createWebHistory(),
   routes: [
-    // {
-    //   path: '/',
-    //   name: 'home',
-    //   component: HomeView
-    // },
+    {
+      path: '/',
+      name: 'home',
+      beforeEnter: () => {
+        if(!localStorage.getItem("accessToken")) {
+          router.push({name: "Login"});
+        }
+      },
+      component: import('../views/Home.vue')
+    },
+    {
+      path: '/login',
+      name: 'Login',
+      component: import('../views/Login.vue')
+    },
     // {
     //   path: '/about',
     //   name: 'about',
