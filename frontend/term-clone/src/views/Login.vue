@@ -1,6 +1,6 @@
 <template>
   <div class="login-container flex flex-col items-center justify-center">
-    <div class="login-box rounded flex flex-col items-center justify-evenly">
+    <div class="login-box rounded flex flex-col items-center justify-center gap-y-4">
       <h1>Login</h1>
       <form action="" method="post">
         <div class="input-container flex flex-col items-center">
@@ -30,6 +30,10 @@
         </div>
         <button @click="formReq" type="submit" class="rounded">Logar</button>
       </form>
+      <div class="secondary-buttons w-60 flex flex-row justify-between">
+        <button type="button" class="rounded">Criar conta</button>
+        <button type="button" class="rounded">Esqueci senha</button>
+      </div>
     </div>
   </div>
 </template>
@@ -105,7 +109,15 @@ input:focus {
 button {
   background-color: #eda571;
   width: 12vw;
-  height: 35px;
+  height: 40px;
+  transition: all 1s ease-in-out;
+}
+
+button[type="button"] {
+  background-color: #EDA571;
+  width: 9vw;
+  height: 20px;
+  font-size: 12px;
   transition: all 1s ease-in-out;
 }
 
