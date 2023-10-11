@@ -1,5 +1,5 @@
 <template>
-  <div class="login-container flex flex-col items-center justify-center">
+  <div class="login-container h-screen flex flex-col items-center justify-center">
     <div class="login-box rounded flex flex-col items-center justify-center gap-y-4">
       <h1>Login</h1>
       <form action="" method="post">
@@ -31,7 +31,7 @@
         <button @click="formReq" type="submit" class="rounded">Logar</button>
       </form>
       <div class="secondary-buttons w-60 flex flex-row justify-between">
-        <button type="button" class="rounded">Criar conta</button>
+        <button type="button" class="rounded"><RouterLink to="newaccount">Criar Conta</RouterLink></button>
         <button type="button" class="rounded">Esqueci senha</button>
       </div>
     </div>
@@ -41,7 +41,7 @@
 <script lang="ts" setup>
 import { ref } from 'vue'
 import axios from 'axios'
-import { useRouter } from 'vue-router';
+import { useRouter, RouterLink } from 'vue-router';
 
 const router = useRouter();
 
