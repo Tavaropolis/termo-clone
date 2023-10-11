@@ -16,8 +16,18 @@ const router = createRouter({
     {
       path: '/login',
       name: 'Login',
-      component: import('../views/Login.vue')
+      component: import('../views/login/Login.vue')
     },
+    {
+      path: '/newaccount',
+      name: 'New Account',
+      component: import('../views/login/NewAccount.vue')
+    },
+    { 
+      //Rota pega tudo
+      path: '/:catchAll(.*)', 
+      redirect: '/'
+    }
     // {
     //   path: '/about',
     //   name: 'about',
