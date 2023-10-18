@@ -1,0 +1,32 @@
+@import './base.scss';
+
+//Importação do Tailwind
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+//Cores
+$main-color: #6E5C62;
+$secondary-color: #312B2D;
+$focus-color: #453B3E;
+$text-main-color: #ffffff;
+$button-color: #eda571;
+$input-login-color: #cb8776;
+
+//Classes compartilhadas
+.dark-background {
+    background-color: $focus-color;
+}
+
+form {
+    display: contents;
+}
+
+.icon-account {
+    width: 3vw;
+    height: 3vh;
+}
+
+.password-icon {
+    cursor: pointer;
+}
