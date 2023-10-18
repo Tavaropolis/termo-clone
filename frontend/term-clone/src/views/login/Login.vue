@@ -1,36 +1,42 @@
 <template>
-  <div class="login-container h-screen flex flex-col items-center justify-center">
+  <div class="login-container w-screen h-screen flex flex-col items-center justify-center">
     <div class="login-box rounded flex flex-col items-center justify-center gap-y-4">
       <h1>Login</h1>
       <form action="" method="post">
-        <div class="input-container flex flex-col items-center">
-          <input
-            v-model="userLogin"
-            @focus="backGroundChange"
-            @focusout="backGroundChange"
-            type="text"
-            required
-            autocomplete="on"
-            id="login"
-            placeholder="Login"
-            class="rounded"
-          />
-          <input
-            v-model="userPassword"
-            @focus="backGroundChange"
-            @focusout="backGroundChange"
-            type="password"
-            required
-            name=""
-            id=""
-            autocomplete="on"
-            placeholder="Senha"
-            class="rounded"
-          />
+        <div class="flex flex-col items-center">
+          <div class="flex items-center justify-center">
+            <Icon icon="fa6-regular:user" class="icon-account"/>
+            <input
+              v-model="userLogin"
+              @focus="backGroundChange"
+              @focusout="backGroundChange"
+              type="text"
+              required
+              autocomplete="on"
+              id="login"
+              placeholder="Login"
+              class="rounded"
+            />
+          </div>
+          <div class="flex items-center justify-center">
+            <Icon v-if="isPasswordVisible" @click="showPassword" icon="fa6-regular:eye-slash" class="icon-account password-icon"/>
+            <Icon v-else @click="showPassword" icon="fa6-regular:eye" class="icon-account password-icon"/>
+            <input
+              v-model="userPassword"
+              @focus="backGroundChange"
+              @focusout="backGroundChange"
+              type="password"
+              required
+              autocomplete="on"
+              placeholder="Senha"
+              id="passwordInput"
+              class="rounded"
+            />
+          </div>
         </div>
         <button @click="formReq" type="submit" class="rounded">Logar</button>
       </form>
-      <div class="secondary-buttons w-60 flex flex-row justify-between">
+      <div class="secondary-buttons w-1/2 flex flex-row justify-around">
         <button type="button" class="rounded"><RouterLink to="newaccount">Criar Conta</RouterLink></button>
         <button type="button" class="rounded">Esqueci senha</button>
       </div>
@@ -40,19 +46,16 @@
 
 <script lang="ts" setup>
 import { ref } from 'vue'
-import axios from 'axios'
 import { useRouter, RouterLink } from 'vue-router';
+import axios from 'axios'
+import { Icon } from '@iconify/vue'
 
 const router = useRouter();
 
+const isPasswordVisible = ref<boolean>(false);
+
 const userLogin = ref<string>()
 const userPassword = ref<string>()
-
-const backGroundChange = () => {
-  const body = document.querySelector('.login-container')
-
-  body?.classList.toggle('dark-background')
-}
 
 const formReq = async (e: Event) => {
   e.preventDefault();
@@ -100,11 +103,25 @@ const tokkenValidate = async(user: any) => {
     console.log(e)
   }
 }
+
+//Funções de estilização
+const backGroundChange = () => {
+  const body = document.querySelector('.login-container')
+
+  body?.classList.toggle('dark-background')
+}
+
+const showPassword = () => {
+    let passwordInput: HTMLElement | null = document.getElementById("passwordInput");
+    !isPasswordVisible.value ? passwordInput?.setAttribute("type", "text") : passwordInput?.setAttribute("type", "password");
+    isPasswordVisible.value = !isPasswordVisible.value;
+}
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
+@import "../../assets/style.scss";
 .login-box {
-  background-color: var(--secondary-color);
+  background-color: $secondary-color;
   width: 50vw;
   height: 80vh;
   overflow: auto;
@@ -120,7 +137,7 @@ form {
 }
 
 input {
-  background-color: #cb8776;
+  background-color: $input-login-color;
   width: 25vw;
   height: 35px;
   margin: 3px;
@@ -131,19 +148,24 @@ input:focus {
   width: 30vw;
 }
 
-::placeholder {
-  color: var(--vt-c-white);
+input::placeholder {
+  color: $text-main-color;
 }
 
-button {
-  background-color: #eda571;
+.icon-account {
+  width: 3vw;
+  height: 3vh;
+}
+
+button[type="submit"] {
+  background-color: $button-color;
   width: 12vw;
   height: 40px;
   transition: all 1s ease-in-out;
 }
 
 button[type="button"] {
-  background-color: #EDA571;
+  background-color: $button-color;
   width: 9vw;
   height: 20px;
   font-size: 12px;
@@ -155,12 +177,7 @@ button:hover {
 }
 
 div.login-container {
-  width: 100vw;
-  height: 100vh;
   transition: all 1s ease-in-out;
 }
 
-.dark-background {
-  background-color: var(--focus-color);
-}
 </style>
