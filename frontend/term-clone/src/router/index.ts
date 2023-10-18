@@ -11,17 +11,17 @@ const router = createRouter({
           router.push({name: "Login"});
         }
       },
-      component: import('../views/Home.vue')
+      component: () => import('../views/Home.vue')
     },
     {
       path: '/login',
       name: 'Login',
-      component: import('../views/login/Login.vue')
+      component: () => import('../views/login/Login.vue')
     },
     {
       path: '/newaccount',
       name: 'New Account',
-      component: import('../views/login/NewAccount.vue')
+      component: () => import('../views/login/NewAccount.vue')
     },
     { 
       //Rota pega tudo
