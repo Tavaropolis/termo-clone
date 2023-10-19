@@ -112,8 +112,8 @@ const backGroundChange = () => {
 }
 
 const showPassword = () => {
-    let passwordInput: HTMLElement | null = document.getElementById("passwordInput");
-    !isPasswordVisible.value ? passwordInput?.setAttribute("type", "text") : passwordInput?.setAttribute("type", "password");
+    let passwordInputField: HTMLElement | null = document.getElementById("passwordInput");
+    !isPasswordVisible.value ? passwordInputField?.setAttribute("type", "text") : passwordInputField?.setAttribute("type", "password");
     isPasswordVisible.value = !isPasswordVisible.value;
 }
 </script>
