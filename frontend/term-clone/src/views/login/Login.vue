@@ -34,7 +34,7 @@
             />
           </div>
         </div>
-        <button @click="formReq" type="submit" class="rounded">Logar</button>
+        <button @click="formReq" type="submit" class="rounded" :disabled="!userLogin || !userPassword? true : false">Logar</button>
       </form>
       <div class="secondary-buttons w-1/2 flex flex-row justify-around">
         <button type="button" class="rounded"><RouterLink to="newaccount">Criar Conta</RouterLink></button>
@@ -45,7 +45,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { useRouter, RouterLink } from 'vue-router';
 import axios from 'axios'
 import { Icon } from '@iconify/vue'
@@ -54,8 +54,8 @@ const router = useRouter();
 
 const isPasswordVisible = ref<boolean>(false);
 
-const userLogin = ref<string>()
-const userPassword = ref<string>()
+const userLogin = ref<string>();
+const userPassword = ref<string>();
 
 const formReq = async (e: Event) => {
   e.preventDefault();
@@ -162,6 +162,10 @@ button[type="submit"] {
   width: 12vw;
   height: 40px;
   transition: all 1s ease-in-out;
+
+}
+button[type="submit"]:disabled {
+  opacity: 0.2;
 }
 
 button[type="button"] {
