@@ -11,7 +11,6 @@
               @focus="backGroundChange"
               @focusout="backGroundChange"
               type="text"
-              required
               autocomplete="on"
               id="login"
               placeholder="Login"
@@ -26,7 +25,6 @@
               @focus="backGroundChange"
               @focusout="backGroundChange"
               type="password"
-              required
               autocomplete="on"
               placeholder="Senha"
               id="passwordInput"
@@ -45,7 +43,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, ref } from 'vue'
+import { ref } from 'vue'
 import { useRouter, RouterLink } from 'vue-router';
 import axios from 'axios'
 import { Icon } from '@iconify/vue'
@@ -64,7 +62,7 @@ const formReq = async (e: Event) => {
     let response = await axios.post(
       'http://127.0.0.1:5001/user',
       {
-        user: userLogin.value,
+        username: userLogin.value,
         password: userPassword.value
       },
       {
@@ -164,6 +162,7 @@ button[type="submit"] {
   transition: all 1s ease-in-out;
 
 }
+
 button[type="submit"]:disabled {
   opacity: 0.2;
 }
