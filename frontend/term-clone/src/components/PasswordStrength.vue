@@ -1,5 +1,5 @@
 <template>
- <div class="password-strength-container h-full w-9/12 flex items-center justify-center">
+ <div class="password-strength-container h-full w-[22vw] flex items-center justify-center">
     <div class="box-result h-4 w-1/3 bg-red-500 rounded"></div>
     <div class="box-result h-4 w-1/3 bg-white rounded"></div>
     <div class="box-result h-4 w-1/3 bg-white rounded"></div>
