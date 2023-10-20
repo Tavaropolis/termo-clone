@@ -7,7 +7,8 @@
           <div class="flex items-center justify-center">
             <Icon icon="fa6-regular:user" class="icon-account" />
             <input
-              v-model="userInput"
+              v-model.lazy="userInput"
+              @change="checkUser"
               @focus="backGroundChange"
               @focusout="backGroundChange"
               autocomplete="on"
@@ -16,7 +17,7 @@
               class="rounded"
             />
           </div>
-          <InputAlert v-show="true" alertMsg="Nome de usuário já cadastrado"/>
+          <InputAlert v-show="alertUser" alertMsg="Nome de usuário já cadastrado"/>
           <div class="flex items-center justify-center">
             <Icon
               v-if="isPasswordVisible"
@@ -109,18 +110,20 @@ const emailInput = ref<string>("");
 
 const isPasswordVisible = ref<boolean>(false);
 const isConfirmVisible = ref<boolean>(false);
+const alertUser = ref<boolean>(false);
 const alertConfirm = ref<boolean>(false);
 const alertEmail = ref<boolean>(false);
 
 const formReq = async (e: Event) => {
   e.preventDefault();
-  console.log("Caiu aqui");
+
   try {
     let response = await axios.post(
       'http://127.0.0.1:5001/createUser',
       {
         username: userInput.value,
-        password: passwordInput.value
+        password: passwordInput.value,
+        email: emailInput.value
       },
       {
         headers: {
@@ -176,24 +179,44 @@ const passwordEntropy = computed(() => {
   }
 });
 
-const checkConfirm = () => {
-  if(passwordInput.value == confirmInput.value) {
-    alertConfirm.value = false;
-  } else {
-    alertConfirm.value = true;
+const checkUser = async() => {
+try {
+    let response = await axios.post(
+      'http://127.0.0.1:5001/getUser',
+      {
+        username: userInput.value,
+      },
+      {
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded'
+        }
+      }
+    )
+    let { data } = response;
+    
+    data.status == "E" ? alertUser.value = true : alertUser.value = false
+  } catch(e) {
+    console.log(e);
   }
+}
+
+const checkConfirm = () => {
+  passwordInput.value == confirmInput.value ? alertConfirm.value = false : alertConfirm.value = true
 }
 
 const checkEmail = () => {
-  if(/@.*\.com/.test(emailInput.value)) {
-    alertEmail.value = false;
-  } else {
-    alertEmail.value = true;
-  }
+  /@.*\.com/.test(emailInput.value)? alertEmail.value = false: alertEmail.value = true;  
+
 }
 
 const buttonCheck = computed(() => {
-  if(userInput.value && passwordInput.value && confirmInput.value) {
+  if(userInput.value && 
+    passwordInput.value && 
+    confirmInput.value && 
+    emailInput.value &&
+    !alertUser.value &&
+    !alertConfirm.value &&
+    !alertEmail.value) {
     return true;
   } else {
     return false;
