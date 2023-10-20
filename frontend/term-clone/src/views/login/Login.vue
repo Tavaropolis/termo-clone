@@ -60,7 +60,7 @@ const formReq = async (e: Event) => {
 
   try {
     let response = await axios.post(
-      'http://127.0.0.1:5001/user',
+      'http://127.0.0.1:5001/login',
       {
         username: userLogin.value,
         password: userPassword.value
