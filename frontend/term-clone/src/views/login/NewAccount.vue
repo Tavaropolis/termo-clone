@@ -7,14 +7,16 @@
           <div class="flex items-center justify-center">
             <Icon icon="fa6-regular:user" class="icon-account" />
             <input
+              v-model="userInput"
               @focus="backGroundChange"
               @focusout="backGroundChange"
-              required
+              autocomplete="on"
               type="text"
               placeholder="Usuário"
               class="rounded"
             />
           </div>
+          <InputAlert v-show="true" alertMsg="Nome de usuário já cadastrado"/>
           <div class="flex items-center justify-center">
             <Icon
               v-if="isPasswordVisible"
@@ -30,9 +32,10 @@
             />
             <input
               v-model="passwordInput"
+              @change="checkConfirm"
               @focus="backGroundChange"
               @focusout="backGroundChange"
-              required
+              autocomplete="on"
               type="password"
               placeholder="Senha"
               class="rounded"
@@ -54,30 +57,36 @@
               class="icon-account password-icon"
             />
             <input
+              v-model.lazy="confirmInput"
+              @change="checkConfirm"
               @focus="backGroundChange"
               @focusout="backGroundChange"
-              required
+              autocomplete="on"
               type="password"
               placeholder="Confirmar senha"
               class="rounded"
               id="confirmInput"
             />
           </div>
+        <InputAlert v-show="alertConfirm" alertMsg="Senhas digitadas estão diferentes"/>
           <div class="flex items-center justify-center">
             <Icon icon="mdi:at" class="icon-account" />
             <input
+              v-model.lazy="emailInput"
+              @change="checkEmail"
               @focus="backGroundChange"
               @focusout="backGroundChange"
-              required
+              autocomplete="on"
               type="email"
               placeholder="Email"
               class="rounded"
             />
           </div>
+          <InputAlert v-show="alertEmail" alertMsg="Este não é um email válido"/>
         </div>
         <div class="group-buttons w-1/2 flex flex-row justify-around">
           <button type="reset" class="rounded">Limpar</button>
-          <button @click="formReq" type="submit" class="rounded">Criar conta</button>
+          <button @click="formReq" type="submit" class="rounded" :disabled="!buttonCheck">Criar conta</button>
         </div>
       </form>
     </div>
@@ -85,17 +94,44 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, computed } from 'vue'
-import { Icon } from '@iconify/vue'
+import { ref, computed } from 'vue';
+import { Icon } from '@iconify/vue';
+import axios from 'axios';
 
+//Componentes
 import PasswordStrength from "@/components/PasswordStrength.vue"
+import InputAlert from '@/components/InputAlert.vue';
 
+const userInput = ref<string>("");
 const passwordInput = ref<string>("");
-const isPasswordVisible = ref<boolean>(false)
-const isConfirmVisible = ref<boolean>(false)
+const confirmInput = ref<string>("");
+const emailInput = ref<string>("");
 
-const formReq = (e: Event) => {
+const isPasswordVisible = ref<boolean>(false);
+const isConfirmVisible = ref<boolean>(false);
+const alertConfirm = ref<boolean>(false);
+const alertEmail = ref<boolean>(false);
+
+const formReq = async (e: Event) => {
   e.preventDefault();
+  console.log("Caiu aqui");
+  try {
+    let response = await axios.post(
+      'http://127.0.0.1:5001/createUser',
+      {
+        username: userInput.value,
+        password: passwordInput.value
+      },
+      {
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded'
+        }
+      }
+    )
+    console.log(response);
+  } catch(e) {
+    console.log(e);
+  }
 }
 
 const passwordEntropy = computed(() => {
@@ -139,6 +175,30 @@ const passwordEntropy = computed(() => {
     return "";
   }
 });
+
+const checkConfirm = () => {
+  if(passwordInput.value == confirmInput.value) {
+    alertConfirm.value = false;
+  } else {
+    alertConfirm.value = true;
+  }
+}
+
+const checkEmail = () => {
+  if(/@.*\.com/.test(emailInput.value)) {
+    alertEmail.value = false;
+  } else {
+    alertEmail.value = true;
+  }
+}
+
+const buttonCheck = computed(() => {
+  if(userInput.value && passwordInput.value && confirmInput.value) {
+    return true;
+  } else {
+    return false;
+  }
+})
 
 //Funções de estilização
 const backGroundChange = () => {
@@ -203,6 +263,10 @@ input:focus {
   width: 10vw;
   height: 37px;
   transition: all 1s ease-in-out;
+}
+
+button[type="submit"]:disabled {
+  opacity: 0.2;
 }
 
 button:hover {
