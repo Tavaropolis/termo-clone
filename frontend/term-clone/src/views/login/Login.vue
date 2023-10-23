@@ -1,6 +1,7 @@
 <template>
-  <div class="login-container w-screen h-screen flex flex-col items-center justify-center">
-    <div class="login-box rounded flex flex-col items-center justify-center gap-y-4">
+  <div class="login-container w-sreen h-screen flex flex-col items-center justify-center">
+    <h1 class="font-semibold">TERMO CLONE</h1>
+    <div class="login-box rounded flex flex-col items-center justify-center gap-y-4 mt-3">
       <h1>Login</h1>
       <form action="" method="post">
         <div class="flex flex-col items-center">
@@ -35,7 +36,7 @@
         <button @click="formReq" type="submit" class="rounded" :disabled="!userLogin || !userPassword? true : false">Logar</button>
       </form>
       <div class="secondary-buttons w-1/2 flex flex-row justify-around">
-        <button type="button" class="rounded"><RouterLink to="newaccount">Criar Conta</RouterLink></button>
+        <RouterLink to="newaccount"><button type="button" class="rounded">Criar Conta</button></RouterLink>
         <button type="button" class="rounded">Esqueci senha</button>
       </div>
     </div>
