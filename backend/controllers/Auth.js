@@ -67,6 +67,21 @@ export async function getUser(req, res, next) {
     }
 }
 
+export async function getEmail(req, res, next) {
+    try {
+        req.body = sanitize(req.body);
+        const queryResponse = await User.findOne({email: req.body.email});
+        
+        if(queryResponse) {
+            res.status(200).json({status: "E", msg: "Email já cadastrado"});
+        } else {
+            res.status(200).json({status: "S", msg: "Email disponível"});
+        }
+    } catch(e) {
+        console.log(e);
+    }
+}
+
 export async function createUser(req, res, next) {
     try {
         req.body = sanitize(req.body);
