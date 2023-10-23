@@ -1,5 +1,5 @@
 <template>
-  <div class="account-container h-screen flex flex-col items-center justify-center">
+  <div id="new-account" class="account-container h-screen w-screen flex flex-col items-center justify-center">
     <div class="account-box rounded flex flex-col items-center justify-center gap-y-4">
       <h1>Criar Nova Conta</h1>
       <form action="" method="post">
@@ -83,7 +83,7 @@
               class="rounded"
             />
           </div>
-          <InputAlert v-show="alertEmail" alertMsg="Este não é um email válido"/>
+          <InputAlert v-show="alertEmail" :alertMsg="msgEmail"/>
         </div>
         <div class="group-buttons w-1/2 flex flex-row justify-around">
           <button type="reset" class="rounded">Limpar</button>
@@ -92,16 +92,18 @@
       </form>
     </div>
   </div>
+  <BasicModal @close-modal="showModal = false" :openModal="showModal"/>
 </template>
 
 <script lang="ts" setup>
-import { ref, computed } from 'vue';
+import { ref, computed, watch } from 'vue';
 import { Icon } from '@iconify/vue';
 import axios from 'axios';
 
 //Componentes
-import PasswordStrength from "@/components/PasswordStrength.vue"
+import PasswordStrength from "@/components/PasswordStrength.vue";
 import InputAlert from '@/components/InputAlert.vue';
+import BasicModal from "@/components/BasicModal.vue"
 
 const userInput = ref<string>("");
 const passwordInput = ref<string>("");
@@ -113,12 +115,14 @@ const isConfirmVisible = ref<boolean>(false);
 const alertUser = ref<boolean>(false);
 const alertConfirm = ref<boolean>(false);
 const alertEmail = ref<boolean>(false);
+const msgEmail = ref<string>("");
+const showModal = ref<boolean>(false);
 
 const formReq = async (e: Event) => {
   e.preventDefault();
 
   try {
-    let response = await axios.post(
+    await axios.post(
       'http://127.0.0.1:5001/createUser',
       {
         username: userInput.value,
@@ -131,7 +135,12 @@ const formReq = async (e: Event) => {
         }
       }
     )
-    console.log(response);
+
+    showModal.value = true;
+    userInput.value = "";
+    passwordInput.value = "";
+    confirmInput.value = "";
+    emailInput.value = ""
   } catch(e) {
     console.log(e);
   }
@@ -204,10 +213,41 @@ const checkConfirm = () => {
   passwordInput.value == confirmInput.value ? alertConfirm.value = false : alertConfirm.value = true
 }
 
-const checkEmail = () => {
-  /@.*\.com/.test(emailInput.value)? alertEmail.value = false: alertEmail.value = true;  
+const checkEmail = async() => {
+  if(!emailInput.value) {
+    alertEmail.value = false;
+    return;
+  }
 
-}
+  if(!(/@.*\.com/.test(emailInput.value))) {
+    msgEmail.value = "Este não é um email válido";
+    alertEmail.value = true;  
+    return;
+  }
+
+  try {
+    let response = await axios.post(
+      'http://127.0.0.1:5001/getEmail',
+      {
+        email: emailInput.value,
+      },
+      {
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded'
+        }
+      }
+    )
+    let { data } = response;
+    
+    if(data.status == "E") {
+      msgEmail.value = "Email já cadastrado";
+      alertEmail.value = true;
+      return;
+    } 
+   
+  } catch(e) {
+    console.log(e);
+  }};
 
 const buttonCheck = computed(() => {
   if(userInput.value && 
@@ -245,6 +285,10 @@ const showConfirm = () => {
     : confirmInputField?.setAttribute('type', 'password')
   isConfirmVisible.value = !isConfirmVisible.value
 }
+
+watch(showModal, () => {
+  backGroundChange();
+})
 </script>
 
 <style lang="scss" scoped>
@@ -253,6 +297,7 @@ const showConfirm = () => {
 .account-container {
   transition: all 1s ease-in-out;
 }
+
 .account-box {
   background-color: $secondary-color;
   width: 50vw;
@@ -292,7 +337,7 @@ button[type="submit"]:disabled {
   opacity: 0.2;
 }
 
-button:hover {
+button:active:hover {
   transform: scale(1.1);
 }
 </style>
