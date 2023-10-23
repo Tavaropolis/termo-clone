@@ -1,10 +1,12 @@
 <template>
- <div class="password-strength-container h-full w-[22vw] flex items-center justify-center">
-    <div class="box-result h-4 w-1/3 bg-red-500 rounded"></div>
-    <div class="box-result h-4 w-1/3 bg-white rounded"></div>
-    <div class="box-result h-4 w-1/3 bg-white rounded"></div>
-    <span class="font-semibold ml-2">{{ strengthMsg }}</span>
- </div>
+ <Transition name="fade">
+    <div class="password-strength-container h-full w-[22vw] flex items-center justify-center">
+       <div class="box-result h-4 w-1/3 bg-red-500 rounded"></div>
+       <div class="box-result h-4 w-1/3 bg-white rounded"></div>
+       <div class="box-result h-4 w-1/3 bg-white rounded"></div>
+       <span class="font-semibold ml-2">{{ strengthMsg || "Fraco" }}</span>
+    </div>
+ </Transition>
 </template>
 
 <script lang="ts" setup>
@@ -46,5 +48,15 @@ const strengthMsg = computed(() => {
 
 <style lang="scss" scoped>
 @import "../assets/style.scss";
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: all 0.5s ease-in-out;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
 
 </style>
