@@ -5,20 +5,46 @@ import bcrypt from "bcrypt";
 
 //Importando Models
 import User from "../models/userModel.js";
+import Attempt from "../models/attemptModel.js";
+
+export async function getIpAttempt(req, res, next) {
+    try {
+        req.body = sanitize(req.body);
+        const ip = req.headers["x-forwarded-for"] || req.connection.remoteAddress;
+        const now = new Date();
+        const actualDate = `${now.getDate()}/${now.getMonth()}/${now.getFullYear()}`;
+        const loginAttempts = await Attempt.findOne({ip: ip}); 
+
+        if(loginAttempts) {
+            loginAttempts.attempts += 1;
+            await loginAttempts.save();
+        } else {
+            await Attempt.create({ip: ip, attempts: 1, lastAttempt: actualDate});
+            loginAttempts = await Attempt.findOne({ip: ip}); 
+        }
+
+        if(loginAttempts.attempts > 3 && loginAttempts.lastAttempt == actualDate) {
+            return res.status(400).send("Limite de tentativas excedida");
+        }
+        
+        next();
+    } catch(e) {
+        console.log(e);
+    }
+}
 
 export async function authUser(req, res, next) {
     try {
-        req.body = sanitize(req.body);
         const queryResponse = await User.findOne({username: req.body.username});
 
         if(!queryResponse) {
-            res.status(400).send("User input is required");
+            return res.status(400).send("Invalid user");
         }
 
         const matchPassword = bcrypt.compare(queryResponse.salt, req.body.password);
 
         if(!matchPassword) {
-            res.status(400).send("Wrong password required");
+            return res.status(400).send("Wrong password");
         }
 
         const userResponse = {
@@ -32,7 +58,7 @@ export async function authUser(req, res, next) {
                 })
         }
 
-        res.status(200).json(userResponse);
+        return res.status(200).json(userResponse);
     } catch(e) {
         console.log(e);
     }
@@ -43,9 +69,11 @@ export async function authToken(req, res, next) {
         req.body = sanitize(req.body);
         let token = req.body.token;
         const decoded = jwt.verify(token, process.env.TOKEN_KEY);
-        console.log(decoded);
+
         if(decoded) {
-            res.status(200).send("Bem vindo 😃");
+            let ip = req.headers["x-forwarded-for"] || req.connection.remoteAddress;
+            await Attempt.deleteOne({ip: ip});
+            return res.status(200).send("Bem vindo 😃");
         }
     } catch(e) {
         console.log(e);
@@ -58,9 +86,9 @@ export async function getUser(req, res, next) {
         const queryResponse = await User.findOne({username: req.body.username});
         
         if(queryResponse) {
-            res.status(200).json({status: "E", msg: "Usuário já cadastrado"});
+            return res.status(200).json({status: "E", msg: "Usuário já cadastrado"});
         } else {
-            res.status(200).json({status: "S", msg: "Usuário disponível"});
+            return res.status(200).json({status: "S", msg: "Usuário disponível"});
         }
     } catch(e) {
         console.log(e);
@@ -73,9 +101,9 @@ export async function getEmail(req, res, next) {
         const queryResponse = await User.findOne({email: req.body.email});
         
         if(queryResponse) {
-            res.status(200).json({status: "E", msg: "Email já cadastrado"});
+            return res.status(200).json({status: "E", msg: "Email já cadastrado"});
         } else {
-            res.status(200).json({status: "S", msg: "Email disponível"});
+            return res.status(200).json({status: "S", msg: "Email disponível"});
         }
     } catch(e) {
         console.log(e);
@@ -91,7 +119,7 @@ export async function createUser(req, res, next) {
 
         await User.create({username: req.body.username, password: hash, email: req.body.email, salt: salt, totalScore: 0});
 
-        res.status(200).send("Usuário cadastrado 😝");
+        return res.status(200).send("Usuário cadastrado 😝");
     } catch(e) {
         console.log(e);
     }
