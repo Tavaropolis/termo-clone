@@ -7,7 +7,7 @@ import bodyParser from "body-parser";
 import User from "../models/userModel.js";
 
 //Importando Controllers
-import { authUser, authToken, getUser, getEmail, createUser } from "../controllers/Auth.js";
+import { getIpAttempt, authUser, authToken, getUser, getEmail, createUser } from "../controllers/Auth.js";
 
 const router = Router();
 
@@ -27,7 +27,7 @@ router.get('/', async (req, res) => {
     }
 })
 
-router.post('/login', urlencodedParser, authUser);
+router.post('/login', urlencodedParser, getIpAttempt, authUser);
 router.post('/authtoken', urlencodedParser, authToken);
 router.post('/getUser', urlencodedParser, getUser);
 router.post('/getEmail', urlencodedParser, getEmail);
