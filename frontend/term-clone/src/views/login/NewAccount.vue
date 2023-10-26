@@ -86,7 +86,7 @@
           <InputAlert v-show="alertEmail" :alertMsg="msgEmail"/>
         </div>
         <div class="group-buttons w-1/2 flex flex-row justify-around">
-          <button type="reset" class="rounded">Limpar</button>
+          <button @click="resetValues" type="reset" class="rounded">Limpar</button>
           <button @click="formReq" type="submit" class="rounded" :disabled="!buttonCheck">Criar conta</button>
         </div>
       </form>
@@ -122,7 +122,7 @@ const formReq = async (e: Event) => {
   e.preventDefault();
 
   try {
-    await axios.post(
+    await axios.put(
       'http://127.0.0.1:5001/createUser',
       {
         username: userInput.value,
@@ -201,10 +201,10 @@ try {
         }
       }
     )
-    let { data } = response;
     
-    data.status == "E" ? alertUser.value = true : alertUser.value = false
+    alertUser.value = false
   } catch(e) {
+    alertUser.value = true;
     console.log(e);
   }
 }
@@ -237,17 +237,23 @@ const checkEmail = async() => {
         }
       }
     )
-    let { data } = response;
-    
-    if(data.status == "E") {
-      msgEmail.value = "Email já cadastrado";
-      alertEmail.value = true;
-      return;
-    } 
-   
+
+    alertEmail.value = false;
   } catch(e) {
-    console.log(e);
+    msgEmail.value = "Email já cadastrado";
+    alertEmail.value = true;
   }};
+
+const resetValues = () => {
+  userInput.value = "";
+  passwordInput.value = "";
+  confirmInput.value = "";
+  emailInput.value = "";
+
+  checkUser();
+  checkConfirm();
+  checkEmail();
+}
 
 const buttonCheck = computed(() => {
   if(userInput.value && 
@@ -310,10 +316,6 @@ h1 {
   padding: 2px;
 }
 
-input::placeholder {
-  color: $text-main-color;
-}
-
 input {
   background-color: $input-login-color;
   width: 25vw;
@@ -337,7 +339,12 @@ button[type="submit"]:disabled {
   opacity: 0.2;
 }
 
-button:active:hover {
+button[type="submit"]:disabled:hover {
+  transform: none;
+}
+
+button:hover {
   transform: scale(1.1);
 }
+
 </style>
