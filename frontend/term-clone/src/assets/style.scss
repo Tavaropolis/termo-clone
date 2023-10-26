@@ -30,3 +30,7 @@ form {
 .password-icon {
     cursor: pointer;
 }
+
+input::placeholder {
+    color: $text-main-color
+}
