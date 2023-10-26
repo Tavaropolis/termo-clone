@@ -1,0 +1,44 @@
+{
+    "compilerOptions": {
+      "target": "esnext",
+      "module": "esnext",
+      "strict": true,
+      "jsx": "preserve",
+      "moduleResolution": "node",
+      "skipLibCheck": true,
+      "esModuleInterop": true,
+      "allowSyntheticDefaultImports": true,
+      "forceConsistentCasingInFileNames": true,
+      "useDefineForClassFields": true,
+      "sourceMap": true,
+      "baseUrl": ".",
+      "types": [
+        "node",
+      ],
+      "paths": {
+        "@/*": [
+          "/*"
+        ]
+      },
+      "lib": [
+        "esnext",
+        "dom",
+        "dom.iterable",
+        "scripthost"
+      ]
+    },
+    "include": [
+      "./**/index.d.ts",
+      "./**/types/index.d.ts",
+      "./**/*.ts",
+      "./**/*.tsx",
+      "/**/*.vue",
+      "/**/*.wav",
+      "tests/**/*.ts",
+      "tests/**/*.tsx"
+    ],
+    "exclude": [
+      "node_modules"
+    ]
+  }
+  

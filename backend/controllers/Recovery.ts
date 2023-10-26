@@ -1,20 +1,23 @@
+import { Request, Response, NextFunction } from 'express';
+
+//Bibliotecas
 import nodemailer from "nodemailer";
 import sanitize from "mongo-sanitize";
 
 //Models
 import User from "../models/userModel.js";
 
-export async function getEmailUser(req, res, next) {
+export async function getEmailUser(req: Request, res: Response, next: NextFunction) {
     try {
         req.body = sanitize(req.body);
 
-        if((/@.*\.com/.test)) {
-            req.queryResponse = await User.findOne({email: req.body.payload});
+        if((/@.*\.com/.test(req.body.payload))) {
+            req.body.queryResponse = await User.findOne({email: req.body.payload});
         } else {
-            req.queryResponse = await User.findOne({username: req.body.payload});
+            req.body.queryResponse = await User.findOne({username: req.body.payload});
         }
 
-        if(!req.queryResponse) {
+        if(!req.body.queryResponse) {
             return res.status(404).send("Usuário não encontrado");
         }
 
@@ -24,7 +27,7 @@ export async function getEmailUser(req, res, next) {
     }
 }
 
-export async function sendEmail(req, res, next) {
+export async function sendEmail(req: Request, res: Response) {
     try {
         let transporter = nodemailer.createTransport({
             service: 'gmail',
@@ -36,7 +39,7 @@ export async function sendEmail(req, res, next) {
           
         let mailOptions = {
             from: 'tavaropolisgithub@gmail.com',
-            to: req.queryResponse.email,
+            to: req.body.queryResponse.email,
             subject: 'Email de recuperação de senha',
             text: 'Deu certo 😊'
           };  
@@ -46,7 +49,7 @@ export async function sendEmail(req, res, next) {
                 console.log(error);
             } else {
                 console.log('Email sent: ' + info.response);
-                return res.status(200).send("Email enviada 😊");
+                return res.status(200).send("Email enviado 😊");
             }
         });
     } catch(e) {

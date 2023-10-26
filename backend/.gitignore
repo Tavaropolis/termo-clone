@@ -1,2 +1,6 @@
 node_modules
 .env
+
+#Artefatos do Typescript
+*.js
+*.js.map

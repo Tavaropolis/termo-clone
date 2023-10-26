@@ -11,7 +11,8 @@
   "scripts": {
     "start": "node server.js",
     "build": "tsc",
-    "dev": "nodemon server.js"
+    "clean": "tsc --build --clean",
+    "dev": "tsc & nodemon server.js"
   },
   "type": "module",
   "dependencies": {
@@ -26,6 +27,12 @@
     "nodemailer": "^6.9.7"
   },
   "devDependencies": {
+    "@types/bcrypt": "^5.0.1",
+    "@types/cors": "^2.8.15",
+    "@types/express": "^4.17.20",
+    "@types/jsonwebtoken": "^9.0.4",
+    "@types/mongo-sanitize": "^1.0.2",
+    "@types/nodemailer": "^6.4.13",
     "nodemon": "^3.0.1"
   }
 }

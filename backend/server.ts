@@ -1,14 +1,15 @@
 //Importando bibliotecas
 import express from "express";
-import 'dotenv/config';
+import dotenv from 'dotenv';
 import cors from "cors";
 
 //Importando módulos
 import router from "./routes/Routes.js";
 import openDb from "./db.js";
 
+dotenv.config();
 const app = express();
-const port = process.env.PORT || 5000;
+const port: number | string = process.env.PORT || 5000;
 
 const corsOption = {
   origin: 'http://127.0.0.1:5173'
