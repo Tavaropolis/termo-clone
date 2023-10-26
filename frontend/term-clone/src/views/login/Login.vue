@@ -37,7 +37,7 @@
       </form>
       <div class="secondary-buttons w-1/2 flex flex-row justify-around">
         <RouterLink to="newaccount"><button type="button" class="rounded">Criar Conta</button></RouterLink>
-        <button type="button" class="rounded">Esqueci senha</button>
+        <RouterLink to="recoverypassword"><button type="button" class="rounded">Esqueci senha</button></RouterLink>
       </div>
     </div>
   </div>
@@ -161,7 +161,6 @@ button[type="submit"] {
   width: 12vw;
   height: 40px;
   transition: all 1s ease-in-out;
-
 }
 
 button[type="submit"]:disabled {
