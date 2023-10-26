@@ -13,7 +13,7 @@ export async function getIpAttempt(req, res, next) {
         const ip = req.headers["x-forwarded-for"] || req.connection.remoteAddress;
         const now = new Date();
         const actualDate = `${now.getDate()}/${now.getMonth()}/${now.getFullYear()}`;
-        const loginAttempts = await Attempt.findOne({ip: ip}); 
+        let loginAttempts = await Attempt.findOne({ip: ip}); 
 
         if(loginAttempts) {
             loginAttempts.attempts += 1;
@@ -33,31 +33,38 @@ export async function getIpAttempt(req, res, next) {
     }
 }
 
-export async function authUser(req, res, next) {
+export async function checkPassword(req, res, next) {
     try {
-        const queryResponse = await User.findOne({username: req.body.username});
+        req.queryResponse = await User.findOne({username: req.body.username});
 
-        if(!queryResponse) {
+        if(!req.queryResponse) {
             return res.status(400).send("Invalid user");
         }
 
-        const matchPassword = bcrypt.compare(queryResponse.salt, req.body.password);
+        const matchPassword = bcrypt.compare(req.queryResponse.salt, req.body.password);
 
         if(!matchPassword) {
             return res.status(400).send("Wrong password");
         }
 
+        next();
+    } catch(e) {
+        console.log(e);
+    }
+}
+
+export async function authUser(req, res, next) {
+    try {
         const userResponse = {
-            id: queryResponse.id,
-            username: queryResponse.username, 
-            password: queryResponse.password,
-            token: jwt.sign( { ...queryResponse }, 
+            id: req.queryResponse.id,
+            username: req.queryResponse.username, 
+            password: req.queryResponse.password,
+            token: jwt.sign( { ...req.queryResponse }, 
                 process.env.TOKEN_KEY,
                 {
                     expiresIn: "2h",
                 })
         }
-
         return res.status(200).json(userResponse);
     } catch(e) {
         console.log(e);
