@@ -23,6 +23,11 @@ const router = createRouter({
       name: 'New Account',
       component: () => import('../views/login/NewAccount.vue')
     },
+    {
+      path: '/recoverypassword',
+      name: 'Recovery Password',
+      component: () => import("../views/login/RecoveryPassword.vue")
+    },
     { 
       //Rota pega tudo
       path: '/:catchAll(.*)', 
