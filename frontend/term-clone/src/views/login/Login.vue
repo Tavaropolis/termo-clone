@@ -35,7 +35,7 @@
         </div>
         <button @click="formReq" type="submit" class="rounded" :disabled="!userLogin || !userPassword? true : false">Logar</button>
       </form>
-      <div class="secondary-buttons w-1/2 flex flex-row justify-around">
+      <div class="secondary-buttons w-1/2 flex flex-row justify-center">
         <RouterLink to="newaccount"><button type="button" class="rounded">Criar Conta</button></RouterLink>
         <RouterLink to="recoverypassword"><button type="button" class="rounded">Esqueci senha</button></RouterLink>
       </div>
@@ -131,10 +131,6 @@ h1 {
   padding: 2px;
 }
 
-form {
-  display: contents;
-}
-
 input {
   background-color: $input-login-color;
   width: 25vw;
@@ -145,15 +141,6 @@ input {
 
 input:focus {
   width: 30vw;
-}
-
-input::placeholder {
-  color: $text-main-color;
-}
-
-.icon-account {
-  width: 3vw;
-  height: 3vh;
 }
 
 button[type="submit"] {
@@ -170,8 +157,9 @@ button[type="submit"]:disabled {
 button[type="button"] {
   background-color: $button-color;
   width: 9vw;
-  height: 20px;
+  height: 30px;
   font-size: 12px;
+  margin: 0 5px;
   transition: all 1s ease-in-out;
 }
 
