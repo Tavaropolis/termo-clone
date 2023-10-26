@@ -22,6 +22,14 @@ form {
     display: contents;
 }
 
+input {
+    background-color: $input-login-color;
+}
+
+input::placeholder {
+    color: $text-main-color
+}
+
 .icon-account {
     width: 3vw;
     height: 3vh;
@@ -31,6 +39,3 @@ form {
     cursor: pointer;
 }
 
-input::placeholder {
-    color: $text-main-color
-}
