@@ -29,7 +29,7 @@ export async function getIpAttempt(req, res, next) {
         
         next();
     } catch(e) {
-        console.log(e);
+        return res.status(500).json({msg: "Erro inesperado"});
     }
 }
 
@@ -49,7 +49,7 @@ export async function checkPassword(req, res, next) {
 
         next();
     } catch(e) {
-        console.log(e);
+        return res.status(500).json({msg: "Erro inesperado"});
     }
 }
 
@@ -67,7 +67,7 @@ export async function authUser(req, res, next) {
         }
         return res.status(200).json(userResponse);
     } catch(e) {
-        console.log(e);
+        return res.status(500).json({msg: "Erro inesperado"});
     }
 }
 
@@ -83,7 +83,7 @@ export async function authToken(req, res, next) {
             return res.status(200).send("Bem vindo 😃");
         }
     } catch(e) {
-        console.log(e);
+        return res.status(500).json({msg: "Erro inesperado"});
     }
 }
 
@@ -92,13 +92,13 @@ export async function getUser(req, res, next) {
         req.body = sanitize(req.body);
         const queryResponse = await User.findOne({username: req.body.username});
         
-        if(queryResponse) {
-            return res.status(200).json({status: "E", msg: "Usuário já cadastrado"});
+        if(!queryResponse) {
+            return res.status(200).json({msg: "Usuário disponível"});
         } else {
-            return res.status(200).json({status: "S", msg: "Usuário disponível"});
+            return res.status(409).json({msg: "Usuário já cadastrado"});       
         }
     } catch(e) {
-        console.log(e);
+        return res.status(500).json({msg: "Erro inesperado"});
     }
 }
 
@@ -107,13 +107,13 @@ export async function getEmail(req, res, next) {
         req.body = sanitize(req.body);
         const queryResponse = await User.findOne({email: req.body.email});
         
-        if(queryResponse) {
-            return res.status(200).json({status: "E", msg: "Email já cadastrado"});
+        if(!queryResponse) {
+            return res.status(200).json({msg: "Email disponível"});
         } else {
-            return res.status(200).json({status: "S", msg: "Email disponível"});
+            return res.status(409).json({msg: "Email já cadastrado"});
         }
     } catch(e) {
-        console.log(e);
+        return res.status(500).json({msg: "Erro inesperado"});
     }
 }
 
@@ -126,8 +126,8 @@ export async function createUser(req, res, next) {
 
         await User.create({username: req.body.username, password: hash, email: req.body.email, salt: salt, totalScore: 0});
 
-        return res.status(200).send("Usuário cadastrado 😝");
+        return res.status(201).send("Usuário cadastrado 😝");
     } catch(e) {
-        console.log(e);
+        return res.status(500).json({msg: "Erro inesperado"});
     }
 }
