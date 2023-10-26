@@ -5,7 +5,6 @@ import cors from "cors";
 
 //Importando módulos
 import router from "./routes/Routes.js";
-import errorHandler from "./middleware/errorHandler.js";
 import openDb from "./db.js";
 
 const app = express();
