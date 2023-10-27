@@ -166,6 +166,9 @@ button[type="button"] {
 button:hover {
   transform: scale(1.1);
 }
+button:disabled:hover {
+  transform: none;
+}
 
 div.login-container {
   transition: all 1s ease-in-out;
