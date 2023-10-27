@@ -31,7 +31,7 @@ const props = defineProps({
 
 const emit = defineEmits(['closeModal'])
 
-onClickOutside(modal, () => emit('closeModal'))
+onClickOutside(modal, () => props.openModal? emit('closeModal'): null)
 </script>
 
 <style lang="scss" scoped>
@@ -39,14 +39,14 @@ onClickOutside(modal, () => emit('closeModal'))
 .basic-modal {
   position: fixed;
   z-index: 1;
-  background-color: #40a723;
+  background-color: $sucess-color;
   width: 40vw;
   height: 25vh;
 }
 
 .modal-slide-enter-active,
 .modal-slide-leave-active {
-  transition: opacity 1.5s, transform 1s ease-in-out;
+  transition: opacity 0.7s, transform 0.7s ease-in-out;
 }
 
 .modal-slide-enter-from, 
