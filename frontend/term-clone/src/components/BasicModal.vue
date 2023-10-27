@@ -1,14 +1,14 @@
 <template>
-  <Teleport to="#new-account">
+  <Teleport :to=teleport>
       <Transition name="modal-slide">
-      <div v-show="openModal" ref="modal" class="basic-modal flex flex-col items-center rounded">
+      <div v-show="openModal" id="main-modal" ref="modal" class="basic-modal flex flex-col items-center rounded">
         <Icon
           @click="$emit('closeModal')"
           icon="mdi:close"
           class="self-end m-2 password-icon icon-account"
         />
         <span class="h-full w-full flex items-center justify-center"
-          >Usuário criado com sucesso! 😊</span
+          >{{ msg }}</span
         >
       </div>
     </Transition>
@@ -16,20 +16,45 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { Icon } from '@iconify/vue'
 import { onClickOutside } from '@vueuse/core'
 
 const modal = ref(null)
 
 const props = defineProps({
+  teleport: {
+    type: String,
+    required: true
+  },
   openModal: {
+    type: Boolean,
+    required: true
+  },
+  msg :{
+    type: String,
+    required: true
+  },
+  isSucess: {
     type: Boolean,
     required: true
   }
 })
 
-const emit = defineEmits(['closeModal'])
+const emit = defineEmits(['closeModal']);
+
+onMounted(() => {
+  let mainModal = document.getElementById('main-modal');
+  console.log(mainModal);
+
+  if(props.isSucess) {
+    mainModal?.classList.add("sucess");
+  } else {
+    mainModal?.classList.add("failure");
+  }
+})
+
+
 
 onClickOutside(modal, () => props.openModal? emit('closeModal'): null)
 </script>
@@ -39,9 +64,16 @@ onClickOutside(modal, () => props.openModal? emit('closeModal'): null)
 .basic-modal {
   position: fixed;
   z-index: 1;
-  background-color: $sucess-color;
   width: 40vw;
   height: 25vh;
+}
+
+.sucess {
+  background-color: $sucess-color;
+}
+
+.failure {
+  background-color: $fail-color;
 }
 
 .modal-slide-enter-active,
