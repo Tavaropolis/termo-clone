@@ -18,7 +18,7 @@
             class="rounded"
           />
         </div>
-        <button type="submit" class="rounded" @click="formReq">Enviar</button>
+        <button type="submit" class="rounded" @click="formReq" :disabled="!recoveryInput">Enviar</button>
       </form>
     </div>
   </div>
