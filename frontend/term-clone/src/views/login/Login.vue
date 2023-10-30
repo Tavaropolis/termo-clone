@@ -1,5 +1,5 @@
 <template>
-  <div class="login-container w-sreen h-screen flex flex-col items-center justify-center">
+  <div id="login-container" class="w-sreen h-screen flex flex-col items-center justify-center">
     <h1 class="font-semibold">TERMO CLONE</h1>
     <div class="login-box rounded flex flex-col items-center justify-center gap-y-4 mt-3">
       <h1>Login</h1>
@@ -41,6 +41,7 @@
       </div>
     </div>
   </div>
+  <BasicModal @close-modal="closeModalFunction" teleport="#login-container" :open-modal="showModal" msg="Usuário e senha inválidos" :is-sucess="false"/>
 </template>
 
 <script lang="ts" setup>
@@ -49,12 +50,16 @@ import { useRouter, RouterLink } from 'vue-router';
 import axios from 'axios'
 import { Icon } from '@iconify/vue'
 
+import BasicModal from '@/components/BasicModal.vue';
+
 const router = useRouter();
 
 const isPasswordVisible = ref<boolean>(false);
 
 const userLogin = ref<string>();
 const userPassword = ref<string>();
+
+const showModal = ref<boolean>(false);
 
 const formReq = async (e: Event) => {
   e.preventDefault();
@@ -77,7 +82,7 @@ const formReq = async (e: Event) => {
 
     tokkenValidate(data);
   } catch (e) {
-    console.log(e)
+    showModal.value = true
   }
 }
 
@@ -101,6 +106,10 @@ const tokkenValidate = async(user: any) => {
   } catch(e) {
     console.log(e)
   }
+}
+
+const closeModalFunction = () => {
+  showModal.value = false
 }
 
 //Funções de estilização
@@ -170,7 +179,7 @@ button:disabled:hover {
   transform: none;
 }
 
-div.login-container {
+#login-container {
   transition: all 1s ease-in-out;
 }
 
