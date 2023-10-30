@@ -45,7 +45,6 @@ const emit = defineEmits(['closeModal']);
 
 onMounted(() => {
   let mainModal = document.getElementById('main-modal');
-  console.log(mainModal);
 
   if(props.isSucess) {
     mainModal?.classList.add("sucess");
@@ -53,8 +52,6 @@ onMounted(() => {
     mainModal?.classList.add("failure");
   }
 })
-
-
 
 onClickOutside(modal, () => props.openModal? emit('closeModal'): null)
 </script>
