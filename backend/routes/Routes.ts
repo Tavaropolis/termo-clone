@@ -29,14 +29,17 @@ router.get('/', async (req, res) => {
     }
 })
 
+//Rotas de login e criação de conta
 router.post('/login', urlencodedParser, getIpAttempt, checkPassword, authUser);
 router.post('/authtoken', urlencodedParser, authToken);
 router.post('/getUser', urlencodedParser, getUser);
 router.post('/getEmail', urlencodedParser, getEmail);
 router.put('/createUser', urlencodedParser, createUser);
 
+//Rotas de recuperação de senha
 router.post('/sendEmail', urlencodedParser, getEmailUser, sendEmail);
 
+//Rotas do conteúdo principal
 router.post('/getRandomWord', urlencodedParser, getRandomWord);
 
 export default router;
