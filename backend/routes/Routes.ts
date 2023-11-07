@@ -9,6 +9,7 @@ import User from "../models/userModel.js";
 //Importando Controllers
 import { getIpAttempt, checkPassword, authUser, authToken, getUser, getEmail, createUser } from "../controllers/Auth.js";
 import { getEmailUser, sendEmail } from "../controllers/Recovery.js";
+import { getRandomWord } from "../controllers/Word.js";
 
 const router = Router();
 
@@ -35,5 +36,7 @@ router.post('/getEmail', urlencodedParser, getEmail);
 router.put('/createUser', urlencodedParser, createUser);
 
 router.post('/sendEmail', urlencodedParser, getEmailUser, sendEmail);
+
+router.post('/getRandomWord', urlencodedParser, getRandomWord);
 
 export default router;
