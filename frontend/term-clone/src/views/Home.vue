@@ -1,6 +1,6 @@
 <template>
   <div class="home-container flex flex-col items-center w-screen h-screen">
-    <header class="flex justify-between items-center w-[55vw] h-[5vh] mt-1">
+    <header class="flex justify-between items-center w-[55vw] h-[5vh] mt-2">
       <div class="lef-buttons flex justify-center items-center">
         <button class="header-buttons flex justify-center items-center text-gray-300 rounded">
           <Icon icon="ic:baseline-expand-more" />
@@ -19,13 +19,13 @@
         </button>
       </div>
     </header>
-    <main class="flex justify-between mt-12">
+    <main class="flex justify-between mt-16">
       <div ref="mainDiv" class="main-content grid grid-cols-5 grid-rows-6 w-[22vw] h-[54vh]">
         <input
           v-for="index in 5"
           :key="index"
           v-model="inputRow1[index - 1]"
-          @input="inputValidation(index - 1)"
+          @input="checkInputRow(index - 1)"
           @keyup.right="focusNextElement(index - 1)"
           @keyup.left="focusPreviousElement(index - 1)"
           maxlength="1"
@@ -37,7 +37,7 @@
           v-for="index in 5"
           :key="index"
           v-model="inputRow2[index - 1]"
-          @input="inputValidation(index - 1)"
+          @input="checkInputRow(index - 1)"
           @keyup.right="focusNextElement(index - 1)"
           @keyup.left="focusPreviousElement(index - 1)"
           maxlength="1"
@@ -49,7 +49,7 @@
           v-for="index in 5"
           :key="index"
           v-model="inputRow3[index - 1]"
-          @input="inputValidation(index - 1)"
+          @input="checkInputRow(index - 1)"
           @keyup.right="focusNextElement(index - 1)"
           @keyup.left="focusPreviousElement(index - 1)"
           maxlength="1"
@@ -61,7 +61,7 @@
           v-for="index in 5"
           :key="index"
           v-model="inputRow4[index - 1]"
-          @input="inputValidation(index - 1)"
+          @input="checkInputRow(index - 1)"
           @keyup.right="focusNextElement(index - 1)"
           @keyup.left="focusPreviousElement(index - 1)"
           maxlength="1"
@@ -73,7 +73,7 @@
           v-for="index in 5"
           :key="index"
           v-model="inputRow5[index - 1]"
-          @input="inputValidation(index - 1)"
+          @input="checkInputRow(index - 1)"
           @keyup.right="focusNextElement(index - 1)"
           @keyup.left="focusPreviousElement(index - 1)"
           maxlength="1"
@@ -85,7 +85,7 @@
           v-for="index in 5"
           :key="index"
           v-model="inputRow6[index - 1]"
-          @input="inputValidation(index - 1)"
+          @input="checkInputRow(index - 1)"
           @keyup.right="focusNextElement(index - 1)"
           @keyup.left="focusPreviousElement(index - 1)"
           maxlength="1"
@@ -94,8 +94,18 @@
         />
       </div>
     </main>
-    <div class="letter-row-1 flex">
-      <button v-for="letter in firstLetterRow" :key="letter" class="letter-row-button rounded">{{ letter }}</button>
+    <div class="letter-row mt-3 w-[55vw] ">
+      <div class="letter-row-1 flex">
+        <button v-for="letter in firstLetterRow" :key="letter" class="letter-row-button rounded">{{ letter }}</button>
+      </div>
+      <div class="letter-row-2 flex ml-4">
+        <button v-for="letter in secondLetterRow" :key="letter" class="letter-row-button rounded">{{ letter }}</button>
+        <button id="backspace-button" class="rounded flex justify-center items-center"><Icon icon="material-symbols:backspace-outline" class="w-7 h-7"/></button>
+      </div>
+      <div class="letter-row-3 flex ml-8">
+        <button v-for="letter in thirdLetterRow" :key="letter" class="letter-row-button rounded">{{ letter }}</button>
+        <button id="enter-button" class="rounded">ENTER</button>
+      </div>
     </div>
   </div>
 </template>
@@ -119,6 +129,9 @@ const inputRow5 = ref<string[]>([])
 const inputRow6 = ref<string[]>([])
 
 const firstLetterRow = ref<string[]>(["q", "w", "e", "r", "t", "y", "u", "i", "o", "p"]);
+const secondLetterRow = ref<string[]>(["a", "s", "d", "f", "g", "h", "j", "k", "l"]);
+const thirdLetterRow = ref<string[]>(["z", "x", "c", "v", "b", "n", "m"]);
+
 onMounted(() => {
   getWord();
   focusNextLine();
@@ -133,92 +146,57 @@ const getWord = async () => {
   })
 
   let { data } = response;
-  mainWord.value = data
+  mainWord.value = data;
 }
 
-const inputValidation = (index: number) => {
-  const activeRow = document.querySelectorAll(`.input-row-${mainRow.value}`);
+const checkInputRow = (index: number) => {
   switch (mainRow.value) {
     case 1:
-      if (/[a-zA-Z]/.test(inputRow1.value[index])) {
-        if (index == 4) {
-          mainRow.value += 1;
-          return;
-        }
-        
-        (activeRow[index + 1] as HTMLInputElement).setSelectionRange(0, 1);
-        (activeRow[index + 1] as HTMLInputElement).focus();
-      } else {
-        inputRow1.value[index] = '';
-      }
+      inputValidation(index, inputRow1);
       break;
     case 2:
-      if (/[a-zA-Z]/.test(inputRow2.value[index])) {
-        if (index == 4) {
-          mainRow.value += 1;
-          return;
-        }
-
-        (activeRow[index + 1] as HTMLInputElement).setSelectionRange(0, 1);
-        (activeRow[index + 1] as HTMLInputElement).focus();
-      } else {
-        inputRow2.value[index] = '';
-      }
+      inputValidation(index, inputRow2);
       break;
     case 3:
-      if (/[a-zA-Z]/.test(inputRow3.value[index])) {
-        if (index == 4) {
-          mainRow.value += 1;
-          return;
-        }
-
-        (activeRow[index + 1] as HTMLInputElement).setSelectionRange(0, 1);
-        (activeRow[index + 1] as HTMLInputElement).focus();
-      } else {
-        inputRow3.value[index] = ''
-      }
+      inputValidation(index, inputRow3);
       break
     case 4:
-      if (/[a-zA-Z]/.test(inputRow4.value[index])) {
-        if (index == 4) {
-          mainRow.value += 1;
-          return;
-        }
-
-        (activeRow[index + 1] as HTMLInputElement).setSelectionRange(0, 1);
-        (activeRow[index + 1] as HTMLInputElement).focus();
-      } else {
-        inputRow4.value[index] = '';
-      }
+      inputValidation(index, inputRow4);
       break;
     case 5:
-      if (/[a-zA-Z]/.test(inputRow5.value[index])) {
-        if (index == 4) {
-          mainRow.value += 1
-          return
-        }
-
-        (activeRow[index + 1] as HTMLInputElement).setSelectionRange(0, 1);
-        (activeRow[index + 1] as HTMLInputElement).focus();
-      } else {
-        inputRow5.value[index] = '';
-      }
+      inputValidation(index, inputRow5);
       break;
     case 6:
-      if (/[a-zA-Z]/.test(inputRow6.value[index])) {
-        if (index == 4) {
-          mainRow.value += 1;
-          return;
-        }
-
-        (activeRow[index + 1] as HTMLInputElement).setSelectionRange(0, 1);
-        (activeRow[index + 1] as HTMLInputElement).focus();
-      } else {
-        inputRow6.value[index] = '';
-      }
+      inputValidation(index, inputRow6);
       break;
   }
 }
+
+const inputValidation = ((index: number, row: any) => {
+  const activeRow = document.querySelectorAll(`.input-row-${mainRow.value}`);
+  if (/[a-zA-Z]/.test(row.value[index])) {
+        if (index == 4) {
+          activeRow[0].classList.add("flip-animation");
+          for(let i = 0; i < activeRow.length; i++) {
+            activeRow[i].addEventListener("animationend", ()=> {
+              if(i != 4) {
+                activeRow[i+1].classList.add("flip-animation");
+              } else {
+                activeRow[4].classList.add("flip-animation");
+              }
+            })
+          }
+          mainRow.value += 1;
+          return;
+        }
+
+        (activeRow[index] as HTMLInputElement).classList.add("input-animation");
+        (activeRow[index + 1] as HTMLInputElement).setSelectionRange(0, 1);
+        (activeRow[index + 1] as HTMLInputElement).focus();
+      } else {
+        row.value[index] = '';
+      }
+})
 
 //Foca o primeiro elemento da linha de baixo
 const focusNextLine = () => {
@@ -356,5 +334,51 @@ onClickOutside(mainDiv, () => {
   font-weight: bold;
   font-size: 20px;
   margin: 2px
+}
+
+#backspace-button {
+  width: 60px;
+  height: 45px;
+  background-color: $focus-color;
+  margin: 2px;
+  margin-left: 30px
+}
+
+#enter-button {
+  width: 180px;
+  height: 45px;
+  background-color: $focus-color;
+  text-transform: uppercase;
+  font-weight: bold;
+  font-size: 20px;
+  margin: 2px;
+  margin-left: 30px
+}
+.input-animation {
+  animation-duration: 0.2s;
+  animation-name: input-animation;
+}
+
+.flip-animation {
+  animation-duration: 0.5s;
+  animation-name: flip-animation;
+}
+
+@keyframes input-animation {
+  50% {
+    transform: scale(1.3);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes flip-animation {
+  50% {
+     transform: rotateY(90deg); 
+  }
+	100% { 
+    transform: rotateY(0deg); 
+  }
 }
 </style>
