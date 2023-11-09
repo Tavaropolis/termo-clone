@@ -24,10 +24,24 @@
         <input
           v-for="index in 5"
           :key="index"
-          v-model="inputRow1[index - 1]"
-          @input="checkInputRow(index - 1)"
+          v-model="inputRows[0][index - 1]"
+          @input="inputValidation(index - 1)"
           @keyup.right="focusNextElement(index - 1)"
           @keyup.left="focusPreviousElement(index - 1)"
+          @keyup.enter="confirmTry(inputRows[0])"
+          maxlength="1"
+          type="text"
+          class="rounded main-input input-row-0"
+        />
+        <input
+          disabled
+          v-for="index in 5"
+          :key="index"
+          v-model="inputRows[1][index - 1]"
+          @input="inputValidation(index - 1)"
+          @keyup.right="focusNextElement(index - 1)"
+          @keyup.left="focusPreviousElement(index - 1)"
+          @keyup.enter="confirmTry(inputRows[1])"
           maxlength="1"
           type="text"
           class="rounded main-input input-row-1"
@@ -36,10 +50,11 @@
           disabled
           v-for="index in 5"
           :key="index"
-          v-model="inputRow2[index - 1]"
-          @input="checkInputRow(index - 1)"
+          v-model="inputRows[2][index - 1]"
+          @input="inputValidation(index - 1)"
           @keyup.right="focusNextElement(index - 1)"
           @keyup.left="focusPreviousElement(index - 1)"
+          @keyup.enter="confirmTry(inputRows[2])"
           maxlength="1"
           type="text"
           class="rounded main-input input-row-2"
@@ -48,10 +63,11 @@
           disabled
           v-for="index in 5"
           :key="index"
-          v-model="inputRow3[index - 1]"
-          @input="checkInputRow(index - 1)"
+          v-model="inputRows[3][index - 1]"
+          @input="inputValidation(index - 1)"
           @keyup.right="focusNextElement(index - 1)"
           @keyup.left="focusPreviousElement(index - 1)"
+          @keyup.enter="confirmTry(inputRows[3])"
           maxlength="1"
           type="text"
           class="rounded main-input input-row-3"
@@ -60,10 +76,11 @@
           disabled
           v-for="index in 5"
           :key="index"
-          v-model="inputRow4[index - 1]"
-          @input="checkInputRow(index - 1)"
+          v-model="inputRows[4][index - 1]"
+          @input="inputValidation(index - 1)"
           @keyup.right="focusNextElement(index - 1)"
           @keyup.left="focusPreviousElement(index - 1)"
+          @keyup.enter="confirmTry(inputRows[4])"
           maxlength="1"
           type="text"
           class="rounded main-input input-row-4"
@@ -72,39 +89,36 @@
           disabled
           v-for="index in 5"
           :key="index"
-          v-model="inputRow5[index - 1]"
-          @input="checkInputRow(index - 1)"
+          v-model="inputRows[5][index - 1]"
+          @input="inputValidation(index - 1)"
           @keyup.right="focusNextElement(index - 1)"
           @keyup.left="focusPreviousElement(index - 1)"
+          @keyup.enter="confirmTry(inputRows[5])"
           maxlength="1"
           type="text"
           class="rounded main-input input-row-5"
         />
-        <input
-          disabled
-          v-for="index in 5"
-          :key="index"
-          v-model="inputRow6[index - 1]"
-          @input="checkInputRow(index - 1)"
-          @keyup.right="focusNextElement(index - 1)"
-          @keyup.left="focusPreviousElement(index - 1)"
-          maxlength="1"
-          type="text"
-          class="rounded main-input input-row-6"
-        />
       </div>
     </main>
-    <div class="letter-row mt-3 w-[55vw] ">
+    <div class="letter-row mt-3 w-[55vw]">
       <div class="letter-row-1 flex">
-        <button v-for="letter in firstLetterRow" :key="letter" class="letter-row-button rounded">{{ letter }}</button>
+        <button v-for="(letter, index) in firstLetterRow" :key="letter" @click="buttonInput(index, 1)" class="letter-row-button rounded">
+          {{ letter }}
+        </button>
       </div>
       <div class="letter-row-2 flex ml-4">
-        <button v-for="letter in secondLetterRow" :key="letter" class="letter-row-button rounded">{{ letter }}</button>
-        <button id="backspace-button" class="rounded flex justify-center items-center"><Icon icon="material-symbols:backspace-outline" class="w-7 h-7"/></button>
+        <button v-for="(letter, index) in secondLetterRow" :key="letter" @click="buttonInput(index, 2)" class="letter-row-button rounded">
+          {{ letter }}
+        </button>
+        <button id="backspace-button" class="rounded flex justify-center items-center">
+          <Icon icon="material-symbols:backspace-outline" class="w-7 h-7" />
+        </button>
       </div>
       <div class="letter-row-3 flex ml-8">
-        <button v-for="letter in thirdLetterRow" :key="letter" class="letter-row-button rounded">{{ letter }}</button>
-        <button id="enter-button" class="rounded">ENTER</button>
+        <button v-for="(letter, index) in thirdLetterRow" :key="letter" @click="buttonInput(index, 3)" class="letter-row-button rounded">
+          {{ letter }}
+        </button>
+        <button @click="confirmTry(inputRows[mainRow])" id="enter-button" class="rounded">ENTER</button>
       </div>
     </div>
   </div>
@@ -116,25 +130,23 @@ import { Icon } from '@iconify/vue'
 import axios from 'axios'
 
 //Elementos de referência
-const mainDiv = ref(null)
+const mainDiv = ref(null);
 
 //Variáveis
-const mainWord = ref<string>("");
-const mainRow = ref<number>(1)
-const inputRow1 = ref<string[]>([])
-const inputRow2 = ref<string[]>([])
-const inputRow3 = ref<string[]>([])
-const inputRow4 = ref<string[]>([])
-const inputRow5 = ref<string[]>([])
-const inputRow6 = ref<string[]>([])
+const mainWord = ref<string[]>([])
+const mainRow = ref<number>(0)
+const isRowFull = ref<boolean>(false);
+const inputRows = ref<string[][]>([
+  [], [], [], [], [], []
+])
 
-const firstLetterRow = ref<string[]>(["q", "w", "e", "r", "t", "y", "u", "i", "o", "p"]);
-const secondLetterRow = ref<string[]>(["a", "s", "d", "f", "g", "h", "j", "k", "l"]);
-const thirdLetterRow = ref<string[]>(["z", "x", "c", "v", "b", "n", "m"]);
+const firstLetterRow = ref<string[]>(['q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p'])
+const secondLetterRow = ref<string[]>(['a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l'])
+const thirdLetterRow = ref<string[]>(['z', 'x', 'c', 'v', 'b', 'n', 'm'])
 
 onMounted(() => {
-  getWord();
-  focusNextLine();
+  getWord()
+  focusNextLine()
 })
 
 //Recupera uma palavra aleatória do banco de dados
@@ -145,146 +157,179 @@ const getWord = async () => {
     }
   })
 
-  let { data } = response;
-  mainWord.value = data;
+  let { data } = response
+  mainWord.value = data.word.split("");
+  console.log(mainWord.value);
 }
 
-const checkInputRow = (index: number) => {
-  switch (mainRow.value) {
-    case 1:
-      inputValidation(index, inputRow1);
-      break;
-    case 2:
-      inputValidation(index, inputRow2);
-      break;
-    case 3:
-      inputValidation(index, inputRow3);
-      break
-    case 4:
-      inputValidation(index, inputRow4);
-      break;
-    case 5:
-      inputValidation(index, inputRow5);
-      break;
-    case 6:
-      inputValidation(index, inputRow6);
-      break;
+const inputValidation = (index: number) => {
+  const activeRow = document.querySelectorAll(`.input-row-${mainRow.value}`)
+  if (/[a-zA-Z]/.test(inputRows.value[mainRow.value][index])) {
+    
+    (activeRow[index] as HTMLInputElement).classList.add('input-animation');
+    (activeRow[index + 1] as HTMLInputElement).setSelectionRange(0, 1);
+    (activeRow[index + 1] as HTMLInputElement).focus();
+  } else {
+    inputRows.value[mainRow.value][index] = ''
   }
 }
 
-const inputValidation = ((index: number, row: any) => {
-  const activeRow = document.querySelectorAll(`.input-row-${mainRow.value}`);
-  if (/[a-zA-Z]/.test(row.value[index])) {
-        if (index == 4) {
-          activeRow[0].classList.add("flip-animation");
-          for(let i = 0; i < activeRow.length; i++) {
-            activeRow[i].addEventListener("animationend", ()=> {
-              if(i != 4) {
-                activeRow[i+1].classList.add("flip-animation");
-              } else {
-                activeRow[4].classList.add("flip-animation");
-              }
-            })
-          }
-          mainRow.value += 1;
-          return;
-        }
-
-        (activeRow[index] as HTMLInputElement).classList.add("input-animation");
-        (activeRow[index + 1] as HTMLInputElement).setSelectionRange(0, 1);
-        (activeRow[index + 1] as HTMLInputElement).focus();
-      } else {
-        row.value[index] = '';
+const buttonInput = ((index: number, letterRow: number) => {
+  for (let i = 0; i < 5; i++) {
+    if (!inputRows.value[mainRow.value][i]) {
+      if(letterRow == 1) {
+        inputRows.value[mainRow.value][i] = firstLetterRow.value[index];
+        return
+      } else if(letterRow == 2) {
+        inputRows.value[mainRow.value][i] = secondLetterRow.value[index];
+        return
+      }else if (letterRow == 3) {
+        inputRows.value[mainRow.value][i] = thirdLetterRow.value[index];
+        return
       }
+    }
+  }
+});
+
+//Funções de quando o usuário aperta enter e confirma a tentativa
+const confirmTry = ((row: any) => {
+  rowValidation(row);
+  if (isRowFull.value) {
+      checkWordResult();
+      endLineAnimation();
+      mainRow.value += 1
+      isRowFull.value = false
+      return
+    }
 })
+
+
+const rowValidation = ((row: any) => {
+  for(let i = 0; i < 5; i++) {
+    if(!row[i]) {
+      return;
+    }
+  }
+  isRowFull.value = true;
+})
+
+const checkWordResult = (() => {
+  const activeRow = document.querySelectorAll(`.input-row-${mainRow.value}`);
+
+  //Checa as letras certas nas posições certas
+  for(let i = 0; i < inputRows.value[mainRow.value].length; i++) {
+    inputRows.value[mainRow.value][i] = inputRows.value[mainRow.value][i].toLocaleLowerCase();
+    if(inputRows.value[mainRow.value][i] == mainWord.value[i]) {
+      (activeRow[i] as HTMLInputElement).classList.add("success")
+   }
+  }
+
+  //Checa as letras certas nas posições erradas
+  for(let i = 0; i < inputRows.value[mainRow.value].length; i++) {
+    for(let j = 0;  j < mainWord.value.length; j++) {
+      if(inputRows.value[mainRow.value][i] == mainWord.value[j]) {
+        if(!(activeRow[i] as HTMLInputElement).classList.contains("success")) {
+          (activeRow[i] as HTMLInputElement).classList.add("warn")
+        }
+      }
+    }
+  }
+});
 
 //Foca o primeiro elemento da linha de baixo
 const focusNextLine = () => {
-  const activeRow = document.querySelector(`.input-row-${mainRow.value}`);
-  (activeRow as HTMLInputElement).setSelectionRange(0, 1);
-  (activeRow as HTMLInputElement).focus();
+  const activeRow = document.querySelector(`.input-row-${mainRow.value}`)
+  ;(activeRow as HTMLInputElement).setSelectionRange(0, 1)
+  ;(activeRow as HTMLInputElement).focus()
 }
 
 // Foca próximo elemento quando usuário aperta seta para a direita
 const focusNextElement = (index: number) => {
-  const activeRow = document.querySelectorAll(`.input-row-${mainRow.value}`);
+  const activeRow = document.querySelectorAll(`.input-row-${mainRow.value}`)
 
   if (index + 1 == 5) {
     (activeRow[0] as HTMLInputElement).setSelectionRange(0, 1);
     (activeRow[0] as HTMLInputElement).focus();
-    return;
+    return
   }
 
-  (activeRow[index + 1] as HTMLInputElement).setSelectionRange(0, 1);
-  (activeRow[index + 1] as HTMLInputElement).focus();
+  ;(activeRow[index + 1] as HTMLInputElement).setSelectionRange(0, 1)
+  ;(activeRow[index + 1] as HTMLInputElement).focus()
 }
 
 // Foca o elemento anterior quando usuário aperta seta para a esquerda
 const focusPreviousElement = (index: number) => {
-  const activeRow = document.querySelectorAll(`.input-row-${mainRow.value}`);
+  const activeRow = document.querySelectorAll(`.input-row-${mainRow.value}`)
   if (index - 1 == -1) {
-    (activeRow[4] as HTMLInputElement).setSelectionRange(0, 1);
-    (activeRow[4] as HTMLInputElement).focus();
-    return;
+    ;(activeRow[4] as HTMLInputElement).setSelectionRange(0, 1)
+    ;(activeRow[4] as HTMLInputElement).focus()
+    return
   }
 
-  (activeRow[index - 1] as HTMLInputElement).setSelectionRange(0, 1);
-  (activeRow[index - 1] as HTMLInputElement).focus();
+  ;(activeRow[index - 1] as HTMLInputElement).setSelectionRange(0, 1)
+  ;(activeRow[index - 1] as HTMLInputElement).focus()
 }
 
 watch(mainRow, () => {
-  const activeRow = document.querySelectorAll(`.input-row-${mainRow.value}`);
-  const previousRow = document.querySelectorAll(`.input-row-${mainRow.value - 1}`);
+  const activeRow = document.querySelectorAll(`.input-row-${mainRow.value}`)
+  const previousRow = document.querySelectorAll(`.input-row-${mainRow.value - 1}`)
 
   activeRow.forEach((item) => {
-    item.removeAttribute('disabled');
+    item.removeAttribute('disabled')
   })
 
   previousRow.forEach((item) => {
     item.setAttribute('disabled', 'true');
-    item.classList.add('aswered');
   })
 
   if (mainRow.value == 7) {
-    return;
+    return
   }
 
-  focusNextLine();
+  focusNextLine()
 })
 
 //Foca primeiro input vazio quando o usuário clica fora
 onClickOutside(mainDiv, () => {
-  const activeRow = document.querySelectorAll(`.input-row-${mainRow.value}`);
-  let activeValue: string[] = [];
-
-  switch (mainRow.value) {
-    case 1:
-      activeValue = [...inputRow1.value];
-      break;
-    case 2:
-      activeValue = [...inputRow2.value];
-      break;
-    case 3:
-      activeValue = [...inputRow3.value];
-      break;
-    case 4:
-      activeValue = [...inputRow4.value];
-      break;
-    case 5:
-      activeValue = [...inputRow5.value];
-      break;
-    case 6:
-      activeValue = [...inputRow6.value];
-      break;
-  }
+  const activeRow = document.querySelectorAll(`.input-row-${mainRow.value}`)
 
   for (let i = 0; i < 5; i++) {
-    if (!activeValue[i]) {
-      (activeRow[i] as HTMLInputElement).focus();
-      return;
+    if (!inputRows.value[mainRow.value][i]) {
+      (activeRow[i] as HTMLInputElement).focus()
+      return
     }
   }
 })
+
+//Funções de estilização
+const endLineAnimation = () => {
+  const activeRow = document.querySelectorAll(`.input-row-${mainRow.value}`);
+  activeRow[0].classList.add("flip-animation"); 
+  if(activeRow[0].classList.contains("success")) { 
+    activeRow[0].classList.add("letter-sucess"); 
+  } else if (activeRow[0].classList.contains("warn")) {
+    activeRow[0].classList.add("flip-animation");   
+    activeRow[0].classList.add("letter-warn");  
+  } else {
+    activeRow[0].classList.add('aswered');
+  }
+
+  for(let i = 0; i < activeRow.length; i++) {
+    activeRow[i].addEventListener("animationend", ()=> {
+      if(activeRow[i+1].classList.contains("success")) {
+        activeRow[i+1].classList.add("flip-animation");   
+        activeRow[i+1].classList.add("letter-sucess");   
+      } else if(activeRow[i+1].classList.contains("warn")) {
+        activeRow[i+1].classList.add("flip-animation");   
+        activeRow[i+1].classList.add("letter-warn");        
+      }else {
+        activeRow[i+1].classList.add("flip-animation"); 
+        activeRow[i+1].classList.add('aswered');
+      }
+    })
+  }
+}
+
 </script>
 <style lang="scss" scoped>
 @import '../assets/style.scss';
@@ -333,7 +378,7 @@ onClickOutside(mainDiv, () => {
   text-transform: uppercase;
   font-weight: bold;
   font-size: 20px;
-  margin: 2px
+  margin: 2px;
 }
 
 #backspace-button {
@@ -341,7 +386,7 @@ onClickOutside(mainDiv, () => {
   height: 45px;
   background-color: $focus-color;
   margin: 2px;
-  margin-left: 30px
+  margin-left: 30px;
 }
 
 #enter-button {
@@ -352,16 +397,24 @@ onClickOutside(mainDiv, () => {
   font-weight: bold;
   font-size: 20px;
   margin: 2px;
-  margin-left: 30px
+  margin-left: 30px;
 }
+
 .input-animation {
   animation-duration: 0.2s;
   animation-name: input-animation;
 }
 
 .flip-animation {
-  animation-duration: 0.5s;
+  animation-duration: 0.4s;
   animation-name: flip-animation;
+}
+
+.main-content .letter-sucess {
+  background-color: $sucess-color
+}
+.main-content .letter-warn {
+  background-color: $attention-color
 }
 
 @keyframes input-animation {
@@ -375,10 +428,11 @@ onClickOutside(mainDiv, () => {
 
 @keyframes flip-animation {
   50% {
-     transform: rotateY(90deg); 
+    transform: rotateY(90deg);
   }
-	100% { 
-    transform: rotateY(0deg); 
+  100% {
+    transform: rotateY(0deg);
   }
 }
+
 </style>
