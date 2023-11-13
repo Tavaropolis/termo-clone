@@ -66,7 +66,7 @@ onClickOutside(modal, () => props.openModal? emit('closeModal'): null)
 }
 
 .sucess {
-  background-color: $sucess-color;
+  background-color: $success-color;
 }
 
 .failure {
