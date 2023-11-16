@@ -25,7 +25,7 @@
         <input
           v-for="index in 5"
           :key="index"
-          v-model="inputRows[0][index - 1]"
+          v-model="inputRows[0][index-1].letter"
           @input="inputValidation(index - 1)"
           @keyup.right="focusNextElement(index - 1)"
           @keyup.left="focusPreviousElement(index - 1)"
@@ -39,12 +39,12 @@
           disabled
           v-for="index in 5"
           :key="index"
-          v-model="inputRows[1][index - 1]"
+          v-model="inputRows[1][index-1].letter"
           @input="inputValidation(index - 1)"
           @keyup.right="focusNextElement(index - 1)"
           @keyup.left="focusPreviousElement(index - 1)"
           @keyup.delete="deletePrevious(index - 1)"
-          @keyup.enter="confirmTry"
+          @keyup.enter="confirmTry()"
           maxlength="1"
           type="text"
           class="rounded main-input input-row-1"
@@ -53,12 +53,12 @@
           disabled
           v-for="index in 5"
           :key="index"
-          v-model="inputRows[2][index - 1]"
+          v-model="inputRows[2][index-1].letter"
           @input="inputValidation(index - 1)"
           @keyup.right="focusNextElement(index - 1)"
           @keyup.left="focusPreviousElement(index - 1)"
           @keyup.delete="deletePrevious(index - 1)"
-          @keyup.enter="confirmTry"
+          @keyup.enter="confirmTry()"
           maxlength="1"
           type="text"
           class="rounded main-input input-row-2"
@@ -67,12 +67,12 @@
           disabled
           v-for="index in 5"
           :key="index"
-          v-model="inputRows[3][index - 1]"
+          v-model="inputRows[3][index-1].letter"
           @input="inputValidation(index - 1)"
           @keyup.right="focusNextElement(index - 1)"
           @keyup.left="focusPreviousElement(index - 1)"
           @keyup.delete="deletePrevious(index - 1)"
-          @keyup.enter="confirmTry"
+          @keyup.enter="confirmTry()"
           maxlength="1"
           type="text"
           class="rounded main-input input-row-3"
@@ -81,7 +81,7 @@
           disabled
           v-for="index in 5"
           :key="index"
-          v-model="inputRows[4][index - 1]"
+          v-model="inputRows[4][index-1].letter"
           @input="inputValidation(index - 1)"
           @keyup.right="focusNextElement(index - 1)"
           @keyup.left="focusPreviousElement(index - 1)"
@@ -95,7 +95,7 @@
           disabled
           v-for="index in 5"
           :key="index"
-          v-model="inputRows[5][index - 1]"
+          v-model="inputRows[5][index-1].letter"
           @input="inputValidation(index - 1)"
           @keyup.right="focusNextElement(index - 1)"
           @keyup.left="focusPreviousElement(index - 1)"
@@ -137,6 +137,7 @@ import { Icon } from '@iconify/vue'
 import axios from 'axios'
 import { Word } from '@andsfonseca/palavras-pt-br'
 
+//Componentes
 import ContentChip from "../components/ContentChip.vue";
 
 //Elementos de referência
@@ -147,9 +148,47 @@ const mainWord = ref<string[]>([])
 const mainRow = ref<number>(0)
 const endGame = ref<boolean>(false)
 const isRowFull = ref<boolean>(false);
-const inputRows = ref<string[][]>([
-  [], [], [], [], [], []
-])
+
+const inputRows:any = ref(
+  [
+    [ { letter: "", success: false, warn: false },
+      { letter: "", success: false, warn: false },
+      { letter: "", success: false, warn: false },
+      { letter: "", success: false, warn: false },
+      { letter: "", success: false, warn: false }
+    ],
+    [ { letter: "", success: false, warn: false },
+      { letter: "", success: false, warn: false },
+      { letter: "", success: false, warn: false },
+      { letter: "", success: false, warn: false },
+      { letter: "", success: false, warn: false }
+    ],
+    [{ letter: "", success: false, warn: false },
+      { letter: "", success: false, warn: false },
+      { letter: "", success: false, warn: false },
+      { letter: "", success: false, warn: false },
+      { letter: "", success: false, warn: false }
+    ],
+    [ { letter: "", success: false, warn: false },
+      { letter: "", success: false, warn: false },
+      { letter: "", success: false, warn: false },
+      { letter: "", success: false, warn: false },
+      { letter: "", success: false, warn: false }
+    ],
+    [ { letter: "", success: false, warn: false },
+      { letter: "", success: false, warn: false },
+      { letter: "", success: false, warn: false },
+      { letter: "", success: false, warn: false },
+      { letter: "", success: false, warn: false }
+    ],
+    [ { letter: "", success: false, warn: false },
+      { letter: "", success: false, warn: false },
+      { letter: "", success: false, warn: false },
+      { letter: "", success: false, warn: false },
+      { letter: "", success: false, warn: false }
+    ],
+  ]
+)
 
 const firstLetterRow = ref<string[]>(['q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p'])
 const secondLetterRow = ref<string[]>(['a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l'])
@@ -159,49 +198,51 @@ const chipActive = ref<boolean>(false);
 const chipMessage = ref<string>("");
 
 onMounted(() => {
+  getData()
   getWord()
   focusNextLine()
-  getData()
 })
 
 //Recupera uma palavra aleatória do banco de dados
 const getWord = async () => {
-  let response = await axios.post('http://127.0.0.1:5001/getRandomWord', {
-    headers: {
-      'Content-Type': 'application/x-www-form-urlencoded'
-    }
-  })
-
-  let { data } = response
-  mainWord.value = data.word.split("");
-  console.log(mainWord.value);
+  if(!mainWord.value.length) {
+    let response = await axios.post('http://127.0.0.1:5001/getRandomWord', {
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      }
+    })
+  
+    let { data } = response
+    mainWord.value = data.word.split("");
+    console.log(mainWord.value);
+  }
 }
 
 const inputValidation = (index: number) => {
   const activeRow = document.querySelectorAll(`.input-row-${mainRow.value}`)
-  if (/[a-zA-ZÇç]/.test(inputRows.value[mainRow.value][index])) {
+  if (/[a-zA-ZÇç]/.test(inputRows.value[mainRow.value][index].letter)) {
     
     (activeRow[index] as HTMLInputElement).classList.add('input-animation');
     (activeRow[index + 1] as HTMLInputElement).setSelectionRange(0, 1);
     (activeRow[index + 1] as HTMLInputElement).focus();
   } else {
-    inputRows.value[mainRow.value][index] = ''
+    inputRows.value[mainRow.value][index].letter = ''
   }
 }
 
 const buttonInput = ((index: number, letterRow: number) => {
   for (let i = 0; i < 5; i++) {
-    if (!inputRows.value[mainRow.value][i]) {
+    if (!inputRows.value[mainRow.value][i].letter) {
       if(letterRow == 1) {
-        inputRows.value[mainRow.value][i] = firstLetterRow.value[index];
+        inputRows.value[mainRow.value][i].letter = firstLetterRow.value[index];
         focusNextElement(i);
         return
       } else if(letterRow == 2) {
-        inputRows.value[mainRow.value][i] = secondLetterRow.value[index];
+        inputRows.value[mainRow.value][i].letter = secondLetterRow.value[index];
         focusNextElement(i);
         return
       }else if (letterRow == 3) {
-        inputRows.value[mainRow.value][i] = thirdLetterRow.value[index];
+        inputRows.value[mainRow.value][i].letter = thirdLetterRow.value[index];
         focusNextElement(i);
         return
       }
@@ -217,20 +258,17 @@ const confirmTry = (() => {
       checkWordResult();
       checkVictory();
       endLineAnimation();
-      saveData();
-      mainRow.value += 1
-      isRowFull.value = false
     }
 })
 
 const wordValidation = (() => {
   const activeRow = document.querySelectorAll(`.input-row-${mainRow.value}`);
-  let userWord = [];
+  let userWord: string[] | string;
+  userWord = inputRows.value[mainRow.value].map((value: any) => {
+      return value.letter.toLowerCase();
+  })
 
-  for(let value of inputRows.value[mainRow.value]){
-    value = value.toLowerCase();
-    userWord.push(value);
-  }
+  userWord = (userWord as string[]).join("")
 
   if(userWord.length < 5) {
     isRowFull.value = false
@@ -249,7 +287,7 @@ const wordValidation = (() => {
     return
   }
 
-  chipActive.value = (!Word.checkValid(userWord.join("")))
+  chipActive.value = (!Word.checkValid(userWord))
   if(chipActive.value) {
     chipMessage.value = "Esta palavra não é aceita"
 
@@ -267,34 +305,41 @@ const wordValidation = (() => {
 })
 
 const checkWordResult = (() => {
-  const activeRow = document.querySelectorAll(`.input-row-${mainRow.value}`);
-
   //Checa as letras certas nas posições certas
   for(let i = 0; i < inputRows.value[mainRow.value].length; i++) {
-    inputRows.value[mainRow.value][i] = inputRows.value[mainRow.value][i].toLocaleLowerCase();
-    if(inputRows.value[mainRow.value][i] == mainWord.value[i]) {
-      (activeRow[i] as HTMLInputElement).classList.add("success")
-   }
+    inputRows.value[mainRow.value][i].letter = inputRows.value[mainRow.value][i].letter.toLowerCase();
+    if(inputRows.value[mainRow.value][i].letter == mainWord.value[i]) {
+      inputRows.value[mainRow.value][i].success = true;
+    }
   }
 
   //Checa as letras certas nas posições erradas
   for(let i = 0; i < inputRows.value[mainRow.value].length; i++) {
     for(let j = 0;  j < mainWord.value.length; j++) {
-      if(inputRows.value[mainRow.value][i] == mainWord.value[j]) {
-        if(!(activeRow[i] as HTMLInputElement).classList.contains("success")) {
-          (activeRow[i] as HTMLInputElement).classList.add("warn")
+      if(inputRows.value[mainRow.value][i].letter == mainWord.value[j]) {
+        if(!inputRows.value[mainRow.value][i].success) {
+          inputRows.value[mainRow.value][i].warn = true;
         }
       }
     }
-  }
+  } 
 });
 
 const checkVictory = (() => {
-  const activeRow = document.querySelectorAll(`.input-row-${mainRow.value}`);
-
-  for(let element of activeRow) {
-    if(!element.classList.contains("success")) {
-      return
+  console.log(mainRow.value)
+  if(mainRow.value !== 5) {
+    for(let letter of inputRows.value[mainRow.value]) {
+      if(!letter.success) {
+        return
+      }
+    }
+  } else if (mainRow.value == 5) {
+    for(let letter of inputRows.value[mainRow.value]) {
+      if(!letter.success) {
+        chipActive.value = true
+        chipMessage.value = `palavra certa: ${mainWord.value.join("")}` 
+        return
+      }
     }
   }
 
@@ -304,17 +349,32 @@ const checkVictory = (() => {
 })
 
 const saveData = (() => {
-  let inputRowsData = Object.assign({}, inputRows.value);
-  localStorage.setItem("inputRows", JSON.stringify(inputRowsData));
-  
+  localStorage.setItem("mainWord", JSON.stringify(mainWord.value))
+  localStorage.setItem("inputRows", JSON.stringify(inputRows.value));
+  localStorage.setItem("mainRow", JSON.stringify(mainRow.value))
 })
 
 const getData = (() => {
-  let inputStorage = localStorage.getItem("inputRows")
+  const wordData = localStorage.getItem("mainWord");
+  if(wordData) {
+    const wordaDataJSON = JSON.parse((wordData as string))
+    mainWord.value = wordaDataJSON;
+  }
 
-  if(inputStorage) {
-    let inputStorageJSON = JSON.parse(inputStorage!);
-    inputRows.value = Object.values(inputStorageJSON)
+  const dataInput = localStorage.getItem("inputRows");
+  if(dataInput) {
+    const dataInputJSON = JSON.parse((dataInput as string));
+    inputRows.value = dataInputJSON;
+  }
+
+  const rowData = localStorage.getItem("mainRow");
+  if(rowData) {
+    const rowDataJSON = JSON.parse((rowData as string));
+    mainRow.value = rowDataJSON;
+  }
+
+  if(wordData && dataInput && rowData) {
+    loadColorization()
   }
 })
 
@@ -357,8 +417,8 @@ const deletePrevious = ((index: number) => {
     return
   }
 
-  if(!inputRows.value[mainRow.value][index]) {
-    inputRows.value[mainRow.value][index - 1] = "";
+  if(!inputRows.value[mainRow.value][index].letter) {
+    inputRows.value[mainRow.value][index - 1].letter = "";
     focusPreviousElement(index);
   }
 });
@@ -372,13 +432,14 @@ const deletePreviousButton = (() => {
         return
       }
       
-      if(!inputRows.value[mainRow.value][i]) {
-        inputRows.value[mainRow.value][i - 1] = "";
+      if(!inputRows.value[mainRow.value][i].letter) {
+        inputRows.value[mainRow.value][i - 1].letter = "";
         focusPreviousElement(i);
         return
       }
   }
 }})
+
 //Foca primeiro input vazio quando o usuário clica fora
 onClickOutside(mainDiv, () => {
   const activeRow = document.querySelectorAll(`.input-row-${mainRow.value}`)
@@ -392,7 +453,9 @@ onClickOutside(mainDiv, () => {
   }
 })
 
-watch(mainRow, () => {
+const changeRow = (() => {
+  mainRow.value += 1
+  isRowFull.value = false
   const activeRow = document.querySelectorAll(`.input-row-${mainRow.value}`)
   const previousRow = document.querySelectorAll(`.input-row-${mainRow.value - 1}`)
 
@@ -449,6 +512,7 @@ watch(endGame, () => {
 const endLineAnimation = () => {
   const activeRow = document.querySelectorAll(`.input-row-${mainRow.value}`);
 
+  //Remove classes para evitar conflito na animação
   for(let row of activeRow) {
     if((row as HTMLInputElement).classList.contains("wrong-animation")) {
       row.classList.remove("wrong-animation");
@@ -459,48 +523,95 @@ const endLineAnimation = () => {
   }
 
   activeRow[0].classList.add("flip-animation"); 
-  if(activeRow[0].classList.contains("success")) { 
+  if(inputRows.value[mainRow.value][0].success) { 
     activeRow[0].classList.add("letter-success"); 
-  } else if (activeRow[0].classList.contains("warn")) {
+  } else if (inputRows.value[mainRow.value][0].warn) {
     activeRow[0].classList.add("flip-animation");   
     activeRow[0].classList.add("letter-warn");  
   } else {
     activeRow[0].classList.add('aswered');
   }
 
-  for(let i = 0; i < activeRow.length; i++) {
+  for(let i = 0; i < inputRows.value[mainRow.value].length; i++) {
     activeRow[i].addEventListener("animationend", ()=> {
-      if(activeRow[i+1].classList.contains("success")) {
+      if(inputRows.value[mainRow.value][i+1].success) {
         activeRow[i+1].classList.add("flip-animation");   
         activeRow[i+1].classList.add("letter-success");   
-      } else if(activeRow[i+1].classList.contains("warn")) {
+      } else if(inputRows.value[mainRow.value][i+1].warn) {
         activeRow[i+1].classList.add("flip-animation");   
         activeRow[i+1].classList.add("letter-warn");        
       }else {
         activeRow[i+1].classList.add("flip-animation"); 
         activeRow[i+1].classList.add('aswered');
       }
+      if(i+1 == 4 && !endGame.value) {
+        changeRow();
+        saveData();
+      }
     })
   }
-  buttonColorization();
+
+  buttonColorization(mainRow.value);
 }
 
-const buttonColorization = (() => {
-  const activeRow = document.querySelectorAll(`.input-row-${mainRow.value}`);
-
-  for(let row of activeRow) {
-    for(let i = 0; i < 3; i++) {
-      const letterRow = document.querySelectorAll(`.letter-row-button-${i}`);
-      for(let letter of letterRow) {
-      if((row as HTMLInputElement).value == letter.textContent) {
-        if(row.classList.contains("success")) {
-          letter.classList.add("letter-success")
-        } else if(row.classList.contains("warn")) {
-          letter.classList.add("letter-warn")
+const buttonColorization = ((index: number) => {
+  for(let i = 0; i < inputRows.value[index].length; i++) {
+    for(let j = 0; j < 3; j++) {
+      const letterRow = document.querySelectorAll(`.letter-row-button-${j}`);
+      for(let item of letterRow) {
+        if(inputRows.value[index][i].letter == item.textContent) {
+          if(inputRows.value[index][i].success) {
+            item.classList.add("flip-animation");
+            item.classList.add("letter-success");
+          } else if(inputRows.value[index][i].warn) {
+            item.classList.add("flip-animation");
+            item.classList.add("letter-warn");
+          } else {
+            item.classList.add("letter-used")
+          }
         }
       }
     }
   }
+})
+
+const loadColorization = (() => {
+  for(let i = 0; i < mainRow.value; i++) {
+    const activeRow = document.querySelectorAll(`.input-row-${i}`);
+    
+    for(let j = 0; j < inputRows.value[mainRow.value].length; j++) {
+      if(inputRows.value[i][j].success) {
+        console.log("Caiu aqui")
+        activeRow[j].classList.add("letter-success");
+      } else if(inputRows.value[i][j].warn) {
+        activeRow[j].classList.add("letter-warn");
+      } else {
+        activeRow[j].classList.add("aswered");
+      }
+    }
+
+    console.log(inputRows.value[mainRow.value-1])
+    buttonColorization(mainRow.value-1);
+  }
+  loadFocus();
+})
+
+const loadFocus = (() => {
+  for(let i = 0; i <= mainRow.value; i++) {
+    const activeRow = document.querySelectorAll(`.input-row-${i}`)
+    const previousRow = document.querySelectorAll(`.input-row-${i - 1}`)
+    
+    for(let row of activeRow) {
+      row.removeAttribute('disabled');
+    }
+  
+    for(let row of previousRow) {
+      row.setAttribute('disabled', 'true');
+    }
+
+    if (mainRow.value == 7) {
+      return
+    }
   }
 })
 
@@ -607,6 +718,9 @@ const buttonColorization = (() => {
 
 .letter-row-button-0.letter-warn, .letter-row-button-1.letter-warn, .letter-row-button-2.letter-warn {
   background-color: $attention-color
+}
+.letter-row-button-0.letter-used, .letter-row-button-1.letter-used, .letter-row-button-2.letter-used {
+  opacity: 0.4
 }
 
 @keyframes input-animation {
